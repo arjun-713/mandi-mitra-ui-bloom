@@ -1,30 +1,33 @@
 
 import { Button } from '@/components/ui/button';
 import { Plus, TrendingUp, Receipt, ShoppingCart } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const QuickActions = () => {
+  const { t } = useLanguage();
+  
   const actions = [
     {
       icon: Plus,
-      label: 'Add Crop',
+      label: t('add_crop'),
       color: 'bg-primary hover:bg-green-700',
       textColor: 'text-white'
     },
     {
       icon: TrendingUp,
-      label: 'Predict Price',
+      label: t('predict_price'),
       color: 'bg-blue-500 hover:bg-blue-600',
       textColor: 'text-white'
     },
     {
       icon: Receipt,
-      label: 'Add Expense',
+      label: t('add_expense'),
       color: 'bg-orange-500 hover:bg-orange-600',
       textColor: 'text-white'
     },
     {
       icon: ShoppingCart,
-      label: 'Sell Crop',
+      label: t('sell_crop'),
       color: 'bg-purple-500 hover:bg-purple-600',
       textColor: 'text-white'
     }
@@ -32,7 +35,7 @@ const QuickActions = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('quick_actions')}</h2>
       
       <div className="grid grid-cols-2 gap-3">
         {actions.map((action, index) => {

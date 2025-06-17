@@ -1,23 +1,26 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Newspaper, Clock } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MarketNews = () => {
+  const { t } = useLanguage();
+  
   const news = [
     {
       title: 'Wheat prices surge 5% amid supply concerns',
       time: '2 hours ago',
-      category: 'Market Alert'
+      category: t('market_alert')
     },
     {
       title: 'New government subsidy for organic farming announced',
       time: '4 hours ago',
-      category: 'Policy Update'
+      category: t('policy_update')
     },
     {
       title: 'Monsoon forecast: Normal rainfall expected this season',
       time: '6 hours ago',
-      category: 'Weather Update'
+      category: t('weather_update')
     }
   ];
 
@@ -26,7 +29,7 @@ const MarketNews = () => {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
           <Newspaper className="w-5 h-5 text-blue-600" />
-          Market News
+          {t('market_news')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

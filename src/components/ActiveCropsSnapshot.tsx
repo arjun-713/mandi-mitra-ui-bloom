@@ -1,15 +1,17 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sprout, IndianRupee } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ActiveCropsSnapshotProps {
   userCrops?: string[];
 }
 
 const ActiveCropsSnapshot = ({ userCrops = [] }: ActiveCropsSnapshotProps) => {
-  // Generate mock active crop data for user's crops
+  const { t } = useLanguage();
+  
   const generateActiveCrop = (cropName: string, index: number) => {
-    const stages = ['Seeding', 'Growing', 'Flowering', 'Harvesting', 'Ready'];
+    const stages = [t('seeding'), t('growing'), t('flowering'), t('harvesting'), t('ready')];
     const expense = Math.floor(Math.random() * 20000) + 5000;
     const daysLeft = Math.floor(Math.random() * 90) + 7;
     
@@ -21,19 +23,18 @@ const ActiveCropsSnapshot = ({ userCrops = [] }: ActiveCropsSnapshotProps) => {
     };
   };
 
-  // Use user's crops or fallback to default crops
   const activeCrops = userCrops.length > 0 
     ? userCrops.slice(0, 2).map(generateActiveCrop)
     : [
         {
           name: 'Wheat',
-          stage: 'Flowering',
+          stage: t('flowering'),
           expense: '₹15,000',
           daysLeft: 45
         },
         {
           name: 'Tomato',
-          stage: 'Harvesting',
+          stage: t('harvesting'),
           expense: '₹8,500',
           daysLeft: 7
         }
@@ -49,7 +50,7 @@ const ActiveCropsSnapshot = ({ userCrops = [] }: ActiveCropsSnapshotProps) => {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
           <Sprout className="w-5 h-5 text-green-600" />
-          Active Crops
+          {t('active_crops')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -66,13 +67,13 @@ const ActiveCropsSnapshot = ({ userCrops = [] }: ActiveCropsSnapshotProps) => {
                 <IndianRupee className="w-3 h-3" />
                 <span>{crop.expense}</span>
               </div>
-              <span>{crop.daysLeft} days left</span>
+              <span>{crop.daysLeft} {t('days_left')}</span>
             </div>
           </div>
         ))}
         
         <div className="pt-2 border-t border-gray-200">
-          <div className="text-sm text-gray-600">Total Investment</div>
+          <div className="text-sm text-gray-600">{t('total_investment')}</div>
           <div className="text-lg font-bold text-gray-900">₹{totalInvestment.toLocaleString()}</div>
         </div>
       </CardContent>

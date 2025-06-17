@@ -9,6 +9,7 @@ import ActiveCropsSnapshot from '@/components/ActiveCropsSnapshot';
 import MarketNews from '@/components/MarketNews';
 import BottomNavigation from '@/components/BottomNavigation';
 import FloatingChatButton from '@/components/FloatingChatButton';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface IndexProps {
   user: any;
@@ -16,6 +17,7 @@ interface IndexProps {
 
 const Index = ({ user }: IndexProps) => {
   const [activeTab, setActiveTab] = useState('home');
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
@@ -31,7 +33,7 @@ const Index = ({ user }: IndexProps) => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">MandiMitra</h1>
               <p className="text-sm text-gray-600">
-                Welcome back, {user?.name || 'Farmer'}!
+                {t('welcome_back')}, {user?.name || 'Farmer'}!
               </p>
               {user?.district && (
                 <p className="text-xs text-gray-500">
@@ -49,7 +51,7 @@ const Index = ({ user }: IndexProps) => {
                 onClick={handleLogout}
                 className="text-xs"
               >
-                Logout
+                {t('logout')}
               </Button>
             </div>
           </div>

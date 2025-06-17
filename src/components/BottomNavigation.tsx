@@ -1,5 +1,6 @@
 
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BottomNavigationProps {
   activeTab: string;
@@ -7,12 +8,14 @@ interface BottomNavigationProps {
 }
 
 const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => {
+  const { t } = useLanguage();
+  
   const tabs = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'market', label: 'Market', icon: '📈' },
-    { id: 'sell', label: 'Sell', icon: '💰' },
-    { id: 'history', label: 'History', icon: '📜' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' }
+    { id: 'home', label: t('home'), icon: '🏠' },
+    { id: 'market', label: t('market'), icon: '📈' },
+    { id: 'sell', label: t('sell'), icon: '💰' },
+    { id: 'history', label: t('history'), icon: '📜' },
+    { id: 'settings', label: t('settings'), icon: '⚙️' }
   ];
 
   return (

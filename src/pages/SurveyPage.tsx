@@ -1,14 +1,106 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const states = [
+  'Andhra Pradesh',
+  'Karnataka',
+  'Tamil Nadu',
+  'Kerala',
+  'Telangana',
+  'Maharashtra',
+  'Uttar Pradesh',
+  'Punjab',
+  'Bihar',
+  'West Bengal',
+];
+
+const districts = {
+  'Andhra Pradesh': ['Anantapur', 'Chittoor', 'East Godavari', 'Guntur', 'Krishna', 'Kurnool'],
+  'Karnataka': ['Bangalore Urban', 'Mysore', 'Mangalore', 'Belgaum', 'Hubli'],
+  'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Tiruchirappalli'],
+  'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Alappuzha', 'Thrissur'],
+  'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Karimnagar', 'Khammam'],
+  'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad'],
+  'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Varanasi', 'Agra', 'Meerut'],
+  'Punjab': ['Amritsar', 'Ludhiana', 'Jalandhar', 'Patiala', 'Bathinda'],
+  'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia'],
+  'West Bengal': ['Kolkata', 'Darjeeling', 'Howrah', 'Durgapur', 'Siliguri'],
+};
+
+const markets = {
+  'Anantapur': ['Anantapur Market', 'Dharmavaram Market'],
+  'Chittoor': ['Chittoor Market', 'Tirupati Market'],
+  'East Godavari': ['Rajahmundry Market', 'Kakinada Market'],
+  'Guntur': ['Guntur Market', 'Narasaraopet Market'],
+  'Krishna': ['Vijayawada Market', 'Machilipatnam Market'],
+  'Kurnool': ['Kurnool Market', 'Nandyal Market'],
+  'Bangalore Urban': ['KR Market', 'Yeshwanthpur Market'],
+  'Mysore': ['Mysore Market'],
+  'Mangalore': ['Mangalore Market'],
+  'Belgaum': ['Belgaum Market'],
+  'Hubli': ['Hubli Market'],
+  'Chennai': ['Koyambedu Market', 'Chennai Market'],
+  'Coimbatore': ['Coimbatore Market'],
+  'Madurai': ['Madurai Market'],
+  'Salem': ['Salem Market'],
+  'Tiruchirappalli': ['Tiruchirappalli Market'],
+  'Thiruvananthapuram': ['Thiruvananthapuram Market'],
+  'Kochi': ['Kochi Market'],
+  'Kozhikode': ['Kozhikode Market'],
+  'Alappuzha': ['Alappuzha Market'],
+  'Thrissur': ['Thrissur Market'],
+  'Hyderabad': ['Hyderabad Market'],
+  'Warangal': ['Warangal Market'],
+  'Nizamabad': ['Nizamabad Market'],
+  'Karimnagar': ['Karimnagar Market'],
+  'Khammam': ['Khammam Market'],
+  'Mumbai': ['Mumbai Market'],
+  'Pune': ['Pune Market'],
+  'Nagpur': ['Nagpur Market'],
+  'Nashik': ['Nashik Market'],
+  'Aurangabad': ['Aurangabad Market'],
+  'Lucknow': ['Lucknow Market'],
+  'Kanpur': ['Kanpur Market'],
+  'Varanasi': ['Varanasi Market'],
+  'Agra': ['Agra Market'],
+  'Meerut': ['Meerut Market'],
+  'Amritsar': ['Amritsar Market'],
+  'Ludhiana': ['Ludhiana Market'],
+  'Jalandhar': ['Jalandhar Market'],
+  'Patiala': ['Patiala Market'],
+  'Bathinda': ['Bathinda Market'],
+  'Patna': ['Patna Market'],
+  'Gaya': ['Gaya Market'],
+  'Bhagalpur': ['Bhagalpur Market'],
+  'Muzaffarpur': ['Muzaffarpur Market'],
+  'Purnia': ['Purnia Market'],
+  'Kolkata': ['Kolkata Market'],
+  'Darjeeling': ['Darjeeling Market'],
+  'Howrah': ['Howrah Market'],
+  'Durgapur': ['Durgapur Market'],
+  'Siliguri': ['Siliguri Market'],
+};
+
+const crops = [
+  'Wheat',
+  'Rice',
+  'Maize',
+  'Cotton',
+  'Sugarcane',
+  'Tomato',
+  'Potato',
+  'Onion',
+  'Chili',
+  'Banana',
+];
 
 interface SurveyPageProps {
-  onComplete: (surveyData: any) => void;
+  onComplete: (data: any) => void;
 }
 
 const SurveyPage = ({ onComplete }: SurveyPageProps) => {
@@ -23,190 +115,78 @@ const SurveyPage = ({ onComplete }: SurveyPageProps) => {
   const [districtSearch, setDistrictSearch] = useState('');
   const [marketSearch, setMarketSearch] = useState('');
   const [cropSearch, setCropSearch] = useState('');
-  const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
-  const [showMarketDropdown, setShowMarketDropdown] = useState(false);
-  const [showCropDropdown, setShowCropDropdown] = useState(false);
+  const { t } = useLanguage();
 
-  const states = [
-    'Andhra Pradesh', 'Karnataka', 'Kerala', 'Maharashtra', 
-    'NCT of Delhi', 'Tamil Nadu', 'Telangana'
-  ];
+  const filteredDistricts = formData.state
+    ? districts[formData.state].filter(d =>
+        d.toLowerCase().includes(districtSearch.toLowerCase())
+      )
+    : [];
 
-  const districts = [
-    'Adilabad', 'Ahmednagar', 'Akola', 'Alappuzha', 'Amarawati', 'Ariyalur', 'Bangalore',
-    'Beed', 'Belgaum', 'Bellary', 'Bhandara', 'Buldhana', 'Chamrajnagar', 'Chandrapur',
-    'Chattrapati Sambhajinagar', 'Chengalpattu', 'Chikmagalur', 'Chitradurga', 'Chittor',
-    'Coimbatore', 'Cuddalore', 'Davangere', 'Delhi', 'Dharashiv(Usmanabad)', 'Dharmapuri',
-    'Dharwad', 'Dhule', 'Dindigul', 'East Godavari', 'Ernakulam', 'Erode', 'Gadchiroli',
-    'Guntur', 'Hyderabad', 'Idukki', 'Jalana', 'Jalgaon', 'Kallakuruchi', 'Kancheepuram',
-    'Kannur', 'Karimnagar', 'Karur', 'Karwar(Uttar Kannad)', 'Kasargod', 'Khammam',
-    'Kolar', 'Kolhapur', 'Kollam', 'Koppal', 'Kottayam', 'Kozhikode(Calicut)', 'Krishna',
-    'Krishnagiri', 'Kurnool', 'Madikeri(Kodagu)', 'Madurai', 'Mahbubnagar', 'Malappuram',
-    'Mangalore(Dakshin Kannad)', 'Medak', 'Mumbai', 'Nagapattinam', 'Nagercoil (Kannyiakumari)',
-    'Nagpur', 'Nalgonda', 'Namakkal', 'Nashik', 'Palakad', 'Parbhani', 'Pathanamthitta',
-    'Perambalur', 'Pudukkottai', 'Pune', 'Raichur', 'Raigad', 'Ramanathapuram', 'Ranga Reddy',
-    'Ranipet', 'Ratnagiri', 'Salem', 'Sangli', 'Satara', 'Shimoga', 'Sholapur', 'Sivaganga',
-    'Tenkasi', 'Thane', 'Thanjavur', 'The Nilgiris', 'Theni', 'Thirssur', 'Thiruchirappalli',
-    'Thirunelveli', 'Thirupathur', 'Thirupur', 'Thiruvananthapuram', 'Thiruvannamalai',
-    'Thiruvarur', 'Thiruvellore', 'Tuticorin', 'Udupi', 'Vashim', 'Vellore', 'Villupuram',
-    'Virudhunagar', 'Warangal', 'Wardha', 'Wayanad', 'West Godavari', 'Yavatmal'
-  ];
+  const filteredMarkets = formData.district
+    ? markets[formData.district]?.filter(m =>
+        m.toLowerCase().includes(marketSearch.toLowerCase())
+      ) || []
+    : [];
 
-  const markets = [
-    'Achalpur', 'Adimali', 'AJattihalli(Uzhavar Sandhai )', 'Akluj', 'Akola', 'Alampur',
-    'Alangudi(Uzhavar Sandhai )', 'Alengad  VFPCK', 'Alibagh', 'Aluva', 'Amalapuram  VFPCK',
-    'Amarawati', 'Ambajipeta', 'Amballur  VFPCK', 'Ambasamudram(Uzhavar Sandhai )',
-    'Ambattur(Uzhavar Sandhai )', 'Ammapet(Uzhavar Sandhai )', 'Ammoor', 'Amrawati(Frui & Veg. Market)',
-    'Anaiyur(Uzhavar Sandhai )', 'Anchal', 'Andipatti(Uzhavar Sandhai )', 'Angamaly',
-    'Anna nagar(Uzhavar Sandhai )', 'Annamanada  VFPCK', 'Arani(Uzhavar Sandhai )',
-    'Aranthangi(Uzhavar Sandhai )', 'Arcot(Uzhavar Sandhai )', 'Ariyalur(Uzhavar Sandhai)',
-    'Armori', 'Aruppukottai(Uzhavar Sandhai )', 'ATHANIKKAL VFPCK', 'Athirampuzha',
-    'Athur(Uzhavar Sandhai )', 'Attayampatti(Uzhavar Sandhai )', 'Avallapalli(Uzhavar Sandhai )',
-    'Avalurpet', 'Azadpur', 'Babhulgaon', 'Bailahongal', 'Bangarpet', 'Bangarupalem',
-    'Barshi', 'Barshi(Vairag)', 'Beed', 'Bhainsa', 'Bhandara', 'Binny Mill (F&V), Bangalore',
-    'Bodinayakanur(Uzhavar Sandhai )', 'Brahmpuri', 'Burgampadu', 'Chamaraj Nagar',
-    'Chandrapur(Ganjwad)', 'Chandvad', 'Chattrapati Sambhajinagar', 'Chavakkad',
-    'Chavassery VFPCK', 'CHAZHUR VFPCK', 'Chelakkara', 'CHELAKKARA VFPCK',
-    'Chengalpet(Uzhavar Sandhai )', 'Chengam(Uzhavar Sandhai )', 'Chengannur',
-    'CHENNITHALA VFPCK', 'Cherthala', 'Chethupattu', 'Chevella', 'Cheyyar',
-    'Cheyyar(Uzhavar Sandhai )', 'Chidambaram(Uzhavar Sandhai )', 'Chikkamagalore',
-    'Chinnalapatti(Uzhavar Sandhai )', 'Chinnamanur(Uzhavar Sandhai )', 'Chinnoar',
-    'Chintalapudi', 'Chintamani', 'Chitradurga', 'Chittoor', 'Chokkikulam(Uzhavar Sandhai )',
-    'Chopada', 'Coonoor(Uzhavar Sandhai )', 'Cuddalore(Uzhavar Sandhai )', 'Dammapet',
-    'Davangere', 'Denkanikottai(Uzhavar Sandhai )', 'Devakottai (Uzhavar Sandhai )',
-    'Devala', 'Devarakonda', 'Devaram(Uzhavar Sandhai )', 'Devarkonda(Dindi)',
-    'Devarkonda(Mallepalli)', 'Dharapuram(Uzhavar Sandhai )', 'Dharmapuri(Uzhavar Sandhai )',
-    'Dhule', 'Dindigul(Uzhavar Sandhai )', 'Dudhani', 'Edapadi (Uzhavar Sandhai )',
-    'EDATHWA VFPCK', 'Elamkur  VFPCK', 'Elampillai(Uzhavar Sandhai )', 'Elevancheri VFPCK',
-    'Eluru', 'Erath  VFPCK', 'Ernakulam', 'Ettumanoor', 'Flower Market,Gazipur',
-    'Gaddiannaram', 'Gadwal', 'Gadwal(Lezza)', 'Gajwel', 'Gandarvakottai(Uzhavar Sandhai )',
-    'Gandchiroli', 'Gangadhara', 'Gangakhed', 'Gangavathi', 'Gingee(Uzhavar Sandhai )',
-    'Gobichettipalayam(Uzhavar Sandhai )', 'Gonikappal', 'Gudalur(Uzhavar Sandhai )',
-    'Gudimalkapur', 'Gudiyatham(Uzhavar Sandhai )', 'Guduvancheri(Uzhavar Sandhai )',
-    'Gundlupet', 'Guntur', 'Haliyala', 'Harippad', 'Harur(Uzhavar Sandhai )',
-    'Hasthampatti(Uzhavar Sandhai )', 'Hinganghat', 'Hingna', 'Hiriyur',
-    'Hosur(Uzhavar Sandhai )', 'Hubli (Amaragol)', 'Huzumnagar(Garidepally)',
-    'Huzurnagar', 'Huzurnagar(Matampally)', 'Huzzurabad', 'Irityy',
-    'Jalagandapuram(Uzhavar Sandhai )', 'Jalana', 'Jameenrayapettai(Uzhavar Sandhai )',
-    'Jamkhed', 'Jeyankondam (Uzhavar Sandhai )', 'Jintur', 'Junnar(Narayangaon)',
-    'Junnar(Otur)', 'Kadungallur  VFPCK', 'Kahithapattarai(Uzhavar Sandhai )',
-    'Kalagategi', 'Kalamb', 'Kallachi', 'Kallakurichi', 'Kallakurichi(Uzhavar Sandhai )',
-    'Kalvan', 'Kalyan', 'Kamakshi VFPCK', 'Kambam(Uzhavar Sandhai )',
-    'Kancheepuram(Uzhavar Sandhai )', 'Kandiyaperi(Uzhavar Sandhai )',
-    'Kangayam(Uzhavar Sandhai )', 'Kanjangadu', 'KANNAKUNNU VFPCK', 'Kannur',
-    'Karad', 'Karaikudi(Uzhavar Sandhai )', 'KARALAM VFPCK',
-    'Karambakkudi(Uzhavar Sandhai )', 'Karimnagar', 'KARIMPUZHA VFPCK',
-    'Kariyapatti(Uzhavar Sandhai )', 'Karjat', 'Karjat(Raigad)', 'Karmala',
-    'KARUMALOOR VFPCK', 'Karur(Uzhavar Sandhai )', 'Katol',
-    'Katpadi (Uzhavar Sandhai )', 'Kattampak  VFPCK', 'Kattappana',
-    'Kaveripattinam(Uzhavar Sandhai )', 'Keelpennathur(Uzhavar Sandhai )',
-    'Keshopur', 'Khammam', 'Khed', 'Kille Dharur', 'KILMANNUR VFPCK',
-    'Kilpennathur', 'Kizhakkancheri VFPCK', 'Kodad', 'Koduvayoor',
-    'KOLAYAD VFPCK', 'Kolhapur', 'Kollam', 'Kollayil  VFPCK', 'Kondotty',
-    'Kothamangalam', 'Kottur', 'Kovilnada  VFPCK', 'Kovilpatti(Uzhavar Sandhai )',
-    'Krishnagiri(Uzhavar Sandhai )', 'Kudchi', 'Kukatpally(Rythu Bazar)',
-    'Kulithalai(Uzhavar Sandhai )', 'Kumarapalayam(Uzhavar Sandhai )',
-    'Kumbakonam (Uzhavar Sandhai )', 'Kundrathur(Uzhavar Sandhai )',
-    'Kunnathukkal VFPCK', 'Kunnukara  VFPCK', 'Kurichi(Uzhavar Sandhai )',
-    'Kuriem  VFPCK', 'Kurnool', 'Kuttoor', 'L B Nagar', 'Lalgudi(Uzhavar Sandhai )',
-    'Lasalgaon(Niphad)', 'Lasalgaon(Vinchur)', 'Madanapalli',
-    'Madhuranthagam(Uzhavar Sandhai )', 'Madikai  VFPCK', 'Mahabubnagar(Rythu Bazar)',
-    'Mahboob Manison', 'Mailaduthurai', 'Majalgaon', 'MALA VFPCK',
-    'Malayattoor  VFPCK', 'Malkapur', 'Malur', 'Manachanallur(Uzhavar Sandhai )',
-    'Manakodur', 'Manapparai(Uzhavar Sandhai )', 'Manathavady', 'Mangal Wedha',
-    'Mangalore', 'Mangaon', 'Manjeswaram', 'MANKADA VFPCK', 'Mannackanad  VFPCK',
-    'Mannar', 'Mannargudi I(Uzhavar Sandhai )', 'Mannargudi II(Uzhavar Sandhai )',
-    'Marottichal  VFPCK', 'Mattannur  VFPCK', 'Mayiladuthurai(Uzhavar Sandhai )',
-    'Medavakkam(Uzhavar Sandhai )', 'Mehekar', 'Mehndipatnam(Rythu Bazar)',
-    'Melapalayam(Uzhavar Sandhai )', 'Melur(Uzhavar Sandhai )',
-    'Mettupalayam(Uzhavar Sandhai )', 'Mettur(Uzhavar Sandhai )',
-    'Mezhuveli  VFPCK', 'Miryalaguda', 'Mohanur(Uzhavar Sandhai )',
-    'Mookkannur  VFPCK', 'Mukkom', 'Mul', 'Mulabagilu', 'Mulakalacheruvu',
-    'Mumbai', 'Mumbai- Fruit Market', 'Murbad', 'Muriyad  VFPCK', 'Murud',
-    'Murum', 'Musiri(Uzhavar Sandhai )', 'Muthupettai(Uzhavar Sandhai )',
-    'Myladi(Uzhavar Sandhai )', 'Nagapattinam(Uzhavar Sandhai )', 'Nagpur',
-    'Namakkal(Uzhavar Sandhai )', 'Nandgaon', 'Nandyal',
-    'Nanganallur(Uzhavar Sandhai )', 'Naranganam  VFPCK',
-    'Naravarikuppam(Uzhavar Sandhai )', 'Nasik', 'Natrampalli(Uzhavar Sandhai )',
-    'Neduvathoor  VFPCK', 'Needamangalam(Uzhavar Sandhai )', 'Neeleswaram',
-    'Neredcherla', 'Newasa(Ghodegaon)', 'Neyyatinkara', 'Neyyattinkara  VFPCK',
-    'NGO Colony(Uzhavar Sandhai )', 'Nooluvally  VFPCK', 'North Paravur'
-  ];
-
-  const crops = [
-    'Apple', 'Banana', 'Banana - Green', 'Beetroot', 'Bengal Gram(Gram)(Whole)',
-    'Betal Leaves', 'Bhindi(Ladies Finger)', 'Bitter gourd', 'Bottle gourd',
-    'Brinjal', 'Cabbage', 'Capsicum', 'Carrot', 'Cauliflower', 'Coconut',
-    'Coffee', 'Coriander(Leaves)', 'Cucumbar(Kheera)', 'Drumstick', 'Dry Chillies',
-    'French Beans (Frasbean)', 'Garlic', 'Ginger(Green)', 'Grapes', 'Green Chilli',
-    'Jack Fruit', 'Lemon', 'Maize', 'Mango', 'Mango (Raw-Ripe)', 'Onion',
-    'Paddy(Dhan)(Common)', 'Papaya', 'Pineapple', 'Potato', 'Pumpkin',
-    'Ragi (Finger Millet)', 'Rice', 'Rose(Loose))', 'Spinach', 'Sunflower',
-    'Tender Coconut', 'Tomato', 'Water Melon', 'Wheat'
-  ];
-
-  const filteredDistricts = districts.filter(district =>
-    district.toLowerCase().includes(districtSearch.toLowerCase())
-  );
-
-  const filteredMarkets = markets.filter(market =>
-    market.toLowerCase().includes(marketSearch.toLowerCase())
-  );
-
-  const filteredCrops = crops.filter(crop =>
-    crop.toLowerCase().includes(cropSearch.toLowerCase())
+  const filteredCrops = crops.filter(c =>
+    c.toLowerCase().includes(cropSearch.toLowerCase()) && !formData.crops.includes(c)
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.state && formData.district && formData.market && formData.crops.length > 0) {
-      onComplete(formData);
-    } else {
-      alert('Please fill in all fields and select at least one crop');
+    
+    if (!formData.name || !formData.state || !formData.district || !formData.market || formData.crops.length === 0) {
+      alert(t('please_fill_fields'));
+      return;
     }
+    
+    onComplete(formData);
   };
 
-  const addCrop = (crop: string) => {
+  const handleCropSelect = (crop: string) => {
     if (!formData.crops.includes(crop)) {
-      setFormData({ ...formData, crops: [...formData.crops, crop] });
+      setFormData(prev => ({
+        ...prev,
+        crops: [...prev.crops, crop]
+      }));
     }
     setCropSearch('');
-    setShowCropDropdown(false);
   };
 
   const removeCrop = (cropToRemove: string) => {
-    setFormData({
-      ...formData,
-      crops: formData.crops.filter(crop => crop !== cropToRemove)
-    });
+    setFormData(prev => ({
+      ...prev,
+      crops: prev.crops.filter(crop => crop !== cropToRemove)
+    }));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-900">Complete Your Profile</CardTitle>
-          <p className="text-gray-600">Help us personalize your farming experience</p>
+          <CardTitle className="text-2xl font-bold text-gray-900">{t('complete_profile')}</CardTitle>
+          <p className="text-gray-600">{t('help_personalize')}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">{t('name')}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder={t('enter_name')}
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="state">State</Label>
-              <Select value={formData.state} onValueChange={(value) => setFormData({ ...formData, state: value })}>
+              <Label htmlFor="state">{t('state')}</Label>
+              <Select value={formData.state} onValueChange={(value) => setFormData(prev => ({ ...prev, state: value, district: '', market: '' }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select your state" />
+                  <SelectValue placeholder={t('select_state')} />
                 </SelectTrigger>
                 <SelectContent>
                   {states.map((state) => (
@@ -218,103 +198,105 @@ const SurveyPage = ({ onComplete }: SurveyPageProps) => {
               </Select>
             </div>
 
-            <div className="relative">
-              <Label htmlFor="district">District</Label>
-              <Input
-                id="district"
-                type="text"
-                placeholder="Type to search district..."
-                value={districtSearch}
-                onChange={(e) => {
-                  setDistrictSearch(e.target.value);
-                  setShowDistrictDropdown(true);
-                }}
-                onFocus={() => setShowDistrictDropdown(true)}
-              />
-              {showDistrictDropdown && filteredDistricts.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                  {filteredDistricts.slice(0, 10).map((district) => (
-                    <div
-                      key={district}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setFormData({ ...formData, district });
-                        setDistrictSearch(district);
-                        setShowDistrictDropdown(false);
-                      }}
-                    >
-                      {district}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="relative">
-              <Label htmlFor="market">Market</Label>
-              <Input
-                id="market"
-                type="text"
-                placeholder="Type to search market..."
-                value={marketSearch}
-                onChange={(e) => {
-                  setMarketSearch(e.target.value);
-                  setShowMarketDropdown(true);
-                }}
-                onFocus={() => setShowMarketDropdown(true)}
-              />
-              {showMarketDropdown && filteredMarkets.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                  {filteredMarkets.slice(0, 10).map((market) => (
-                    <div
-                      key={market}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setFormData({ ...formData, market });
-                        setMarketSearch(market);
-                        setShowMarketDropdown(false);
-                      }}
-                    >
-                      {market}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <Label>Crops You Grow</Label>
-              <div className="space-y-2">
+            {formData.state && (
+              <div>
+                <Label htmlFor="district">{t('district')}</Label>
                 <div className="relative">
                   <Input
+                    id="district"
                     type="text"
-                    placeholder="Type to search and add crops..."
-                    value={cropSearch}
-                    onChange={(e) => {
-                      setCropSearch(e.target.value);
-                      setShowCropDropdown(true);
-                    }}
-                    onFocus={() => setShowCropDropdown(true)}
+                    placeholder={t('search_district')}
+                    value={districtSearch}
+                    onChange={(e) => setDistrictSearch(e.target.value)}
                   />
-                  {showCropDropdown && filteredCrops.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                      {filteredCrops.slice(0, 10).map((crop) => (
+                  {districtSearch && filteredDistricts.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
+                      {filteredDistricts.slice(0, 10).map((district) => (
                         <div
-                          key={crop}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => addCrop(crop)}
+                          key={district}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, district, market: '' }));
+                            setDistrictSearch(district);
+                          }}
                         >
-                          {crop}
+                          {district}
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
-                
-                {formData.crops.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.crops.map((crop) => (
+                {formData.district && (
+                  <p className="text-sm text-green-600 mt-1">Selected: {formData.district}</p>
+                )}
+              </div>
+            )}
+
+            {formData.district && (
+              <div>
+                <Label htmlFor="market">{t('market')}</Label>
+                <div className="relative">
+                  <Input
+                    id="market"
+                    type="text"
+                    placeholder={t('search_market')}
+                    value={marketSearch}
+                    onChange={(e) => setMarketSearch(e.target.value)}
+                  />
+                  {marketSearch && filteredMarkets.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
+                      {filteredMarkets.slice(0, 10).map((market) => (
+                        <div
+                          key={market}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, market }));
+                            setMarketSearch(market);
+                          }}
+                        >
+                          {market}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {formData.market && (
+                  <p className="text-sm text-green-600 mt-1">Selected: {formData.market}</p>
+                )}
+              </div>
+            )}
+
+            <div>
+              <Label htmlFor="crops">{t('crops')}</Label>
+              <div className="relative">
+                <Input
+                  id="crops"
+                  type="text"
+                  placeholder={t('search_crops')}
+                  value={cropSearch}
+                  onChange={(e) => setCropSearch(e.target.value)}
+                />
+                {cropSearch && filteredCrops.length > 0 && (
+                  <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
+                    {filteredCrops.slice(0, 10).map((crop) => (
                       <div
+                        key={crop}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleCropSelect(crop)}
+                      >
+                        {crop}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {formData.crops.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600 mb-2">Selected crops:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.crops.map((crop) => (
+                      <span
                         key={crop}
                         className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm flex items-center gap-2"
                       >
@@ -322,19 +304,19 @@ const SurveyPage = ({ onComplete }: SurveyPageProps) => {
                         <button
                           type="button"
                           onClick={() => removeCrop(crop)}
-                          className="hover:bg-green-200 rounded-full p-1"
+                          className="text-green-600 hover:text-green-800"
                         >
-                          <X className="w-3 h-3" />
+                          ×
                         </button>
-                      </div>
+                      </span>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             <Button type="submit" className="w-full bg-primary hover:bg-green-700">
-              Complete Setup
+              {t('complete_setup')}
             </Button>
           </form>
         </CardContent>

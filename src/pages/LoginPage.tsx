@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -14,6 +16,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +30,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
         localStorage.setItem('currentUser', JSON.stringify(user));
         onLogin();
       } else {
-        alert('Invalid phone number or password');
+        alert(t('invalid_credentials'));
       }
     } else {
       // Create new user
@@ -35,7 +38,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
       const existingUser = users.find((u: any) => u.phoneNumber === phoneNumber);
       
       if (existingUser) {
-        alert('Account already exists with this phone number');
+        alert(t('account_exists'));
       } else {
         const newUser = { phoneNumber, password, isNewUser: true };
         users.push(newUser);
@@ -54,12 +57,12 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
             <span className="text-white font-bold text-2xl">🌾</span>
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">MandiMitra</CardTitle>
-          <p className="text-gray-600">Smart Farming Platform</p>
+          <p className="text-gray-600">{t('smart_farming_platform')}</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">{t('phone_number')}</Label>
               <Input
                 id="phone"
                 type="tel"
@@ -70,11 +73,11 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
               />
             </div>
             <div>
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder={t('enter_password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -82,7 +85,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
             </div>
             
             <Button type="submit" className="w-full bg-primary hover:bg-green-700">
-              {isLogin ? 'Login' : 'Create Account'}
+              {isLogin ? t('login') : t('create_account')}
             </Button>
             
             <div className="text-center">
@@ -91,10 +94,17 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-primary hover:underline text-sm"
               >
-                {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
+                {isLogin ? t('no_account_signup') : t('have_account_login')}
               </button>
             </div>
           </form>
+          
+          <div className="pt-4 border-t border-gray-200">
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              {t('change_language')}
+            </Label>
+            <LanguageSelector />
+          </div>
         </CardContent>
       </Card>
     </div>
