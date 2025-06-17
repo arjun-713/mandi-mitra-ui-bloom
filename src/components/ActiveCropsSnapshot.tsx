@@ -2,21 +2,47 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sprout, IndianRupee } from 'lucide-react';
 
-const ActiveCropsSnapshot = () => {
-  const activeCrops = [
-    {
-      name: 'Wheat',
-      stage: 'Flowering',
-      expense: '₹15,000',
-      daysLeft: 45
-    },
-    {
-      name: 'Tomato',
-      stage: 'Harvesting',
-      expense: '₹8,500',
-      daysLeft: 7
-    }
-  ];
+interface ActiveCropsSnapshotProps {
+  userCrops?: string[];
+}
+
+const ActiveCropsSnapshot = ({ userCrops = [] }: ActiveCropsSnapshotProps) => {
+  // Generate mock active crop data for user's crops
+  const generateActiveCrop = (cropName: string, index: number) => {
+    const stages = ['Seeding', 'Growing', 'Flowering', 'Harvesting', 'Ready'];
+    const expense = Math.floor(Math.random() * 20000) + 5000;
+    const daysLeft = Math.floor(Math.random() * 90) + 7;
+    
+    return {
+      name: cropName,
+      stage: stages[Math.floor(Math.random() * stages.length)],
+      expense: `₹${expense.toLocaleString()}`,
+      daysLeft
+    };
+  };
+
+  // Use user's crops or fallback to default crops
+  const activeCrops = userCrops.length > 0 
+    ? userCrops.slice(0, 2).map(generateActiveCrop)
+    : [
+        {
+          name: 'Wheat',
+          stage: 'Flowering',
+          expense: '₹15,000',
+          daysLeft: 45
+        },
+        {
+          name: 'Tomato',
+          stage: 'Harvesting',
+          expense: '₹8,500',
+          daysLeft: 7
+        }
+      ];
+
+  const totalInvestment = activeCrops.reduce((total, crop) => {
+    const amount = parseInt(crop.expense.replace(/₹|,/g, ''));
+    return total + amount;
+  }, 0);
 
   return (
     <Card className="bg-white shadow-sm border border-gray-200">
@@ -47,7 +73,7 @@ const ActiveCropsSnapshot = () => {
         
         <div className="pt-2 border-t border-gray-200">
           <div className="text-sm text-gray-600">Total Investment</div>
-          <div className="text-lg font-bold text-gray-900">₹23,500</div>
+          <div className="text-lg font-bold text-gray-900">₹{totalInvestment.toLocaleString()}</div>
         </div>
       </CardContent>
     </Card>
