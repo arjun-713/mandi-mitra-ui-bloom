@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { LogOut, Settings } from 'lucide-react';
 import CropWatchlist from '@/components/CropWatchlist';
 import QuickActions from '@/components/QuickActions';
 import WeatherCard from '@/components/WeatherCard';
@@ -13,9 +15,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface IndexProps {
   user: any;
+  onShowSettings: () => void;
 }
 
-const Index = ({ user }: IndexProps) => {
+const Index = ({ user, onShowSettings }: IndexProps) => {
   const [activeTab, setActiveTab] = useState('home');
   const { t } = useLanguage();
 
@@ -31,7 +34,7 @@ const Index = ({ user }: IndexProps) => {
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">MandiMitra</h1>
+              <h1 className="text-2xl font-bold text-primary">MandiMitra</h1>
               <p className="text-sm text-gray-600">
                 {t('welcome_back')}, {user?.name || 'Farmer'}!
               </p>
@@ -42,17 +45,23 @@ const Index = ({ user }: IndexProps) => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-lg">🌾</span>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleLogout}
-                className="text-xs"
-              >
-                {t('logout')}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-green-700 transition-colors">
+                    <span className="text-white font-semibold text-lg">🌾</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={onShowSettings} className="cursor-pointer">
+                    <Settings className="h-4 w-4 mr-2" />
+                    {t('settings')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    {t('logout')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

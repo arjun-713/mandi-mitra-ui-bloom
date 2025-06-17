@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const states = [
   'Andhra Pradesh',
@@ -100,22 +102,23 @@ const crops = [
   'Banana',
 ];
 
-interface SurveyPageProps {
-  onComplete: (data: any) => void;
-  onBack?: () => void;
+interface SettingsPageProps {
+  user: any;
+  onBack: () => void;
+  onSave: (data: any) => void;
 }
 
-const SurveyPage = ({ onComplete, onBack }: SurveyPageProps) => {
+const SettingsPage = ({ user, onBack, onSave }: SettingsPageProps) => {
   const [formData, setFormData] = useState({
-    name: '',
-    state: '',
-    district: '',
-    market: '',
-    crops: [] as string[]
+    name: user?.name || '',
+    state: user?.state || '',
+    district: user?.district || '',
+    market: user?.market || '',
+    crops: user?.crops || []
   });
 
-  const [districtSearch, setDistrictSearch] = useState('');
-  const [marketSearch, setMarketSearch] = useState('');
+  const [districtSearch, setDistrictSearch] = useState(user?.district || '');
+  const [marketSearch, setMarketSearch] = useState(user?.market || '');
   const [cropSearch, setCropSearch] = useState('');
   const { t } = useLanguage();
 
@@ -137,13 +140,7 @@ const SurveyPage = ({ onComplete, onBack }: SurveyPageProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.state || !formData.district || !formData.market || formData.crops.length === 0) {
-      alert(t('please_fill_fields'));
-      return;
-    }
-    
-    onComplete(formData);
+    onSave(formData);
   };
 
   const handleCropSelect = (crop: string) => {
@@ -166,22 +163,27 @@ const SurveyPage = ({ onComplete, onBack }: SurveyPageProps) => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6">
       <Card className="w-full max-w-2xl">
-        <CardHeader className="text-center relative">
-          {onBack && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onBack}
-              className="absolute left-0 top-0 mt-2"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('back')}
-            </Button>
-          )}
-          <CardTitle className="text-2xl font-bold text-gray-900">{t('complete_profile')}</CardTitle>
-          <p className="text-gray-600">{t('help_personalize')}</p>
+        <CardHeader className="relative">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onBack}
+            className="absolute left-0 top-0 mt-2"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('back')}
+          </Button>
+          <CardTitle className="text-2xl font-bold text-gray-900 text-center">{t('settings')}</CardTitle>
+          <p className="text-gray-600 text-center">{t('update_profile')}</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
+          <div>
+            <Label className="text-sm font-medium text-gray-700 mb-2 block">
+              {t('change_language')}
+            </Label>
+            <LanguageSelector />
+          </div>
+          
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="name">{t('name')}</Label>
@@ -329,7 +331,7 @@ const SurveyPage = ({ onComplete, onBack }: SurveyPageProps) => {
             </div>
 
             <Button type="submit" className="w-full bg-primary hover:bg-green-700">
-              {t('complete_setup')}
+              {t('save_changes')}
             </Button>
           </form>
         </CardContent>
@@ -338,4 +340,4 @@ const SurveyPage = ({ onComplete, onBack }: SurveyPageProps) => {
   );
 };
 
-export default SurveyPage;
+export default SettingsPage;
