@@ -23,6 +23,7 @@ interface IndexProps {
 const Index = ({ user, onShowSettings }: IndexProps) => {
   const [activeTab, setActiveTab] = useState('home');
   const [currentView, setCurrentView] = useState('home');
+  const [userData, setUserData] = useState(user);
   const { t } = useLanguage();
 
   const handleLogout = () => {
@@ -42,12 +43,26 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
     setCurrentView('home');
   };
 
+  const handleUpdateUserCrops = (crops: any[]) => {
+    const updatedUser = { ...userData, activeCrops: crops };
+    setUserData(updatedUser);
+    
+    // Update localStorage
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+  };
+
   if (currentView === 'cropWatchlist') {
-    return <CropWatchlistPage user={user} onBack={handleBackToHome} />;
+    return <CropWatchlistPage user={userData} onBack={handleBackToHome} />;
   }
 
   if (currentView === 'activeCrops') {
-    return <ActiveCropsPage user={user} onBack={handleBackToHome} />;
+    return (
+      <ActiveCropsPage 
+        user={userData} 
+        onBack={handleBackToHome} 
+        onUpdateUserCrops={handleUpdateUserCrops}
+      />
+    );
   }
 
   return (
@@ -59,11 +74,11 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
             <div>
               <h1 className="text-2xl font-bold text-primary">MandiMitra</h1>
               <p className="text-sm text-gray-600">
-                {t('welcome_back')}, {user?.name || 'Farmer'}!
+                {t('welcome_back')}, {userData?.name || 'Farmer'}!
               </p>
-              {user?.district && (
+              {userData?.district && (
                 <p className="text-xs text-gray-500">
-                  {user.district}, {user.state}
+                  {userData.district}, {userData.state}
                 </p>
               )}
             </div>
@@ -94,8 +109,8 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
       <div className="pb-20 px-4 space-y-6 pt-6">
         {/* Crop Watchlist */}
         <CropWatchlist 
-          userCrops={user?.crops || []} 
-          userMarket={user?.market} 
+          userCrops={userData?.crops || []} 
+          userMarket={userData?.market} 
           onViewAll={handleViewAllCrops}
         />
         
@@ -104,9 +119,12 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
         
         {/* Weather & Active Crops Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <WeatherCard district={user?.district} />
+          <WeatherCard district={userData?.district} />
           <div onClick={handleActiveCardsClick} className="cursor-pointer">
-            <ActiveCropsSnapshot userCrops={user?.crops || []} />
+            <ActiveCropsSnapshot 
+              userCrops={userData?.activeCrops || []} 
+              onAddCrop={handleActiveCardsClick}
+            />
           </div>
         </div>
         

@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Plus, IndianRupee, Edit } from 'lucide-react';
+import { ArrowLeft, Plus, IndianRupee } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CropDetailsPage from './CropDetailsPage';
 
 interface Expense {
   id: string;
@@ -25,85 +25,84 @@ interface Crop {
   acres: number;
   status: string;
   expenses: Expense[];
+  totalExpenses: number;
 }
 
 interface ActiveCropsPageProps {
   user: any;
   onBack: () => void;
+  onUpdateUserCrops: (crops: Crop[]) => void;
 }
 
-const ActiveCropsPage = ({ user, onBack }: ActiveCropsPageProps) => {
+const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPageProps) => {
   const { t } = useLanguage();
-  const [crops, setCrops] = useState<Crop[]>([]);
+  const [crops, setCrops] = useState<Crop[]>(user?.activeCrops || []);
   const [showAddCrop, setShowAddCrop] = useState(false);
-  const [showAddExpense, setShowAddExpense] = useState(false);
-  const [selectedCrop, setSelectedCrop] = useState<string>('');
+  const [selectedCrop, setSelectedCrop] = useState<Crop | null>(null);
   const [newCrop, setNewCrop] = useState({
     name: '',
     startDate: '',
-    acres: 0
+    acres: ''
   });
-  const [newExpense, setNewExpense] = useState({
-    amount: 0,
-    paymentMethod: 'Cash' as 'Cash' | 'UPI',
-    notes: ''
-  });
+  const [cropSearchTerm, setCropSearchTerm] = useState('');
 
-  const statusOptions = [
-    t('land_preparation'),
-    t('sowing'),
-    t('growing'),
-    t('ready_to_harvest'),
-    t('harvested')
+  const availableCrops = [
+    'Apple', 'Banana', 'Banana - Green', 'Beetroot', 'Bengal Gram(Gram)(Whole)', 'Betal Leaves',
+    'Bhindi(Ladies Finger)', 'Bitter gourd', 'Bottle gourd', 'Brinjal', 'Cabbage', 'Capsicum',
+    'Carrot', 'Cauliflower', 'Coconut', 'Coffee', 'Coriander(Leaves)', 'Cucumbar(Kheera)',
+    'Drumstick', 'Dry Chillies', 'French Beans (Frasbean)', 'Garlic', 'Ginger(Green)', 'Grapes',
+    'Green Chilli', 'Jack Fruit', 'Lemon', 'Maize', 'Mango', 'Mango (Raw-Ripe)', 'Onion',
+    'Paddy(Dhan)(Common)', 'Papaya', 'Pineapple', 'Potato', 'Pumpkin', 'Ragi (Finger Millet)',
+    'Rice', 'Rose(Loose)', 'Spinach', 'Sunflower', 'Tender Coconut', 'Tomato', 'Water Melon', 'Wheat'
   ];
 
+  const filteredCrops = availableCrops.filter(crop =>
+    crop.toLowerCase().includes(cropSearchTerm.toLowerCase())
+  );
+
   const handleAddCrop = () => {
-    if (newCrop.name && newCrop.startDate && newCrop.acres > 0) {
+    if (newCrop.name && newCrop.startDate && newCrop.acres && parseFloat(newCrop.acres) > 0) {
       const crop: Crop = {
         id: Date.now().toString(),
         name: newCrop.name,
         startDate: newCrop.startDate,
-        acres: newCrop.acres,
-        status: t('land_preparation'),
-        expenses: []
+        acres: parseFloat(newCrop.acres),
+        status: 'Land Preparation',
+        expenses: [],
+        totalExpenses: 0
       };
-      setCrops([...crops, crop]);
-      setNewCrop({ name: '', startDate: '', acres: 0 });
+      
+      const updatedCrops = [...crops, crop];
+      setCrops(updatedCrops);
+      onUpdateUserCrops(updatedCrops);
+      
+      setNewCrop({ name: '', startDate: '', acres: '' });
+      setCropSearchTerm('');
       setShowAddCrop(false);
     }
   };
 
-  const handleAddExpense = () => {
-    if (newExpense.amount > 0 && selectedCrop) {
-      const expense: Expense = {
-        id: Date.now().toString(),
-        amount: newExpense.amount,
-        paymentMethod: newExpense.paymentMethod,
-        notes: newExpense.notes,
-        date: new Date().toISOString().split('T')[0]
-      };
-      
-      setCrops(crops.map(crop => 
-        crop.id === selectedCrop 
-          ? { ...crop, expenses: [...crop.expenses, expense] }
-          : crop
-      ));
-      
-      setNewExpense({ amount: 0, paymentMethod: 'Cash', notes: '' });
-      setShowAddExpense(false);
-      setSelectedCrop('');
-    }
+  const handleUpdateCrop = (updatedCrop: Crop) => {
+    const updatedCrops = crops.map(crop => 
+      crop.id === updatedCrop.id ? updatedCrop : crop
+    );
+    setCrops(updatedCrops);
+    onUpdateUserCrops(updatedCrops);
   };
 
-  const updateCropStatus = (cropId: string, newStatus: string) => {
-    setCrops(crops.map(crop => 
-      crop.id === cropId ? { ...crop, status: newStatus } : crop
-    ));
+  const handleBackFromDetails = () => {
+    setSelectedCrop(null);
   };
 
-  const getTotalExpenses = (crop: Crop) => {
-    return crop.expenses.reduce((total, expense) => total + expense.amount, 0);
-  };
+  if (selectedCrop) {
+    return (
+      <CropDetailsPage
+        crop={selectedCrop}
+        onBack={handleBackFromDetails}
+        onUpdateCrop={handleUpdateCrop}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
@@ -119,30 +118,51 @@ const ActiveCropsPage = ({ user, onBack }: ActiveCropsPageProps) => {
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="text-xl font-bold text-primary">{t('active_crops')}</h1>
+              <h1 className="text-xl font-bold text-primary">Active Crops</h1>
             </div>
             <Dialog open={showAddCrop} onOpenChange={setShowAddCrop}>
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-green-700">
                   <Plus className="w-4 h-4 mr-2" />
-                  {t('add_crop')}
+                  Add Crop
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>{t('add_crop')}</DialogTitle>
+                  <DialogTitle>Add New Crop</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label>{t('crop_name')}</Label>
-                    <Input
-                      value={newCrop.name}
-                      onChange={(e) => setNewCrop({...newCrop, name: e.target.value})}
-                      placeholder="Enter crop name"
-                    />
+                    <Label>Crop Name</Label>
+                    <div className="relative">
+                      <Input
+                        value={cropSearchTerm || newCrop.name}
+                        onChange={(e) => {
+                          setCropSearchTerm(e.target.value);
+                          setNewCrop({...newCrop, name: e.target.value});
+                        }}
+                        placeholder="Search or type crop name"
+                      />
+                      {cropSearchTerm && filteredCrops.length > 0 && (
+                        <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
+                          {filteredCrops.slice(0, 5).map((crop) => (
+                            <div
+                              key={crop}
+                              className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                setNewCrop({...newCrop, name: crop});
+                                setCropSearchTerm('');
+                              }}
+                            >
+                              {crop}
+                            </div>     
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div>
-                    <Label>{t('start_date')}</Label>
+                    <Label>Start Date</Label>
                     <Input
                       type="date"
                       value={newCrop.startDate}
@@ -150,16 +170,18 @@ const ActiveCropsPage = ({ user, onBack }: ActiveCropsPageProps) => {
                     />
                   </div>
                   <div>
-                    <Label>{t('acres')}</Label>
+                    <Label>Acres</Label>
                     <Input
                       type="number"
+                      step="0.5"
                       value={newCrop.acres}
-                      onChange={(e) => setNewCrop({...newCrop, acres: Number(e.target.value)})}
-                      placeholder="Enter acres"
+                      onChange={(e) => setNewCrop({...newCrop, acres: e.target.value})}
+                      placeholder="Enter acres (e.g., 2.5)"
+                      className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
                   <Button onClick={handleAddCrop} className="w-full bg-primary hover:bg-green-700">
-                    {t('add')}
+                    Add Crop
                   </Button>
                 </div>
               </DialogContent>
@@ -172,143 +194,70 @@ const ActiveCropsPage = ({ user, onBack }: ActiveCropsPageProps) => {
         {crops.length === 0 ? (
           <Card className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-8 text-center">
-              <p className="text-gray-600 mb-4">{t('no_crops_message')}</p>
+              <p className="text-gray-600 mb-4">No crops added yet</p>
               <Button 
                 onClick={() => setShowAddCrop(true)}
                 className="bg-primary hover:bg-green-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                {t('add_crop')}
+                Add Now
               </Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
             {crops.map((crop) => (
-              <Card key={crop.id} className="bg-white shadow-sm border border-gray-200">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold flex items-center justify-between">
-                    <span>{crop.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedCrop(crop.id);
-                        setShowAddExpense(true);
-                      }}
-                    >
-                      <Plus className="w-4 h-4 mr-1" />
-                      {t('add_expense')}
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Started:</span>
-                      <div className="font-medium">{crop.startDate}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Acres:</span>
-                      <div className="font-medium">{crop.acres}</div>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label className="text-sm text-gray-600">{t('current_status')}</Label>
+              <Card 
+                key={crop.id} 
+                className="bg-white shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => setSelectedCrop(crop)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900">{crop.name}</h3>
                     <Select 
                       value={crop.status} 
-                      onValueChange={(value) => updateCropStatus(crop.id, value)}
+                      onValueChange={(value) => {
+                        const updatedCrop = { ...crop, status: value };
+                        handleUpdateCrop(updatedCrop);
+                      }}
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <SelectTrigger className="mt-1">
+                      <SelectTrigger className="w-48">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {statusOptions.map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Land Preparation">Land Preparation</SelectItem>
+                        <SelectItem value="Sowing">Sowing</SelectItem>
+                        <SelectItem value="Growing">Growing</SelectItem>
+                        <SelectItem value="Ready to Harvest">Ready to Harvest</SelectItem>
+                        <SelectItem value="Harvested">Harvested</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-
-                  <div className="pt-2 border-t border-gray-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">{t('total_expenses')}</span>
-                      <div className="flex items-center gap-1 font-bold text-gray-900">
-                        <IndianRupee className="w-4 h-4" />
-                        {getTotalExpenses(crop).toLocaleString()}
+                  
+                  <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
+                    <div>
+                      <span className="block">Started:</span>
+                      <span className="font-medium text-gray-900">{crop.startDate}</span>
+                    </div>
+                    <div>
+                      <span className="block">Acres:</span>
+                      <span className="font-medium text-gray-900">{crop.acres}</span>
+                    </div>
+                    <div>
+                      <span className="block">Total Expenses:</span>
+                      <div className="flex items-center gap-1 font-medium text-gray-900">
+                        <IndianRupee className="w-3 h-3" />
+                        <span>₹{(crop.totalExpenses || 0).toLocaleString()}</span>
                       </div>
                     </div>
-                    
-                    {crop.expenses.length > 0 && (
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
-                        {crop.expenses.map((expense) => (
-                          <div key={expense.id} className="text-xs bg-gray-50 p-2 rounded">
-                            <div className="flex justify-between items-center">
-                              <span className="font-medium">₹{expense.amount}</span>
-                              <span className="text-gray-500">{expense.paymentMethod}</span>
-                            </div>
-                            {expense.notes && (
-                              <div className="text-gray-600 mt-1">{expense.notes}</div>
-                            )}
-                            <div className="text-gray-500">{expense.date}</div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
         )}
-
-        <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{t('add_new_expense')}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label>{t('expense_amount')}</Label>
-                <Input
-                  type="number"
-                  value={newExpense.amount}
-                  onChange={(e) => setNewExpense({...newExpense, amount: Number(e.target.value)})}
-                  placeholder="Enter amount"
-                />
-              </div>
-              <div>
-                <Label>{t('payment_method')}</Label>
-                <Select 
-                  value={newExpense.paymentMethod} 
-                  onValueChange={(value: 'Cash' | 'UPI') => setNewExpense({...newExpense, paymentMethod: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Cash">{t('cash')}</SelectItem>
-                    <SelectItem value="UPI">{t('upi')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>{t('notes')}</Label>
-                <Textarea
-                  value={newExpense.notes}
-                  onChange={(e) => setNewExpense({...newExpense, notes: e.target.value})}
-                  placeholder="Add notes (optional)"
-                />
-              </div>
-              <Button onClick={handleAddExpense} className="w-full bg-primary hover:bg-green-700">
-                {t('add')}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

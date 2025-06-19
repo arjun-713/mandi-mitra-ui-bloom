@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 
 interface LanguageContextType {
@@ -8,6 +7,8 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export type Language = 'en' | 'hi' | 'ta' | 'te' | 'kn' | 'mr';
 
 const translations = {
   en: {
