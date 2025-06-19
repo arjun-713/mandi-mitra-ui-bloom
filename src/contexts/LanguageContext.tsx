@@ -1,270 +1,170 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-export type Language = 'en' | 'hi' | 'kn' | 'ta' | 'te' | 'ml';
-
-interface LanguageContextProps {
-  language: Language;
-  setLanguage: (language: Language) => void;
+interface LanguageContextType {
+  language: string;
+  setLanguage: (lang: string) => void;
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
-
-interface LanguageProviderProps {
-  children: React.ReactNode;
-}
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const translations = {
   en: {
-    'welcome_back': 'Welcome Back',
-    'logout': 'Logout',
-    'home': 'Home',
-    'market': 'Market',
-    'sell': 'Sell',
-    'history': 'History',
-    'settings': 'Settings',
-    'smart_farming_platform': 'Smart Farming Platform',
-    'phone_number': 'Phone Number',
-    'password': 'Password',
-    'enter_password': 'Enter Password',
-    'login': 'Login',
-    'create_account': 'Create Account',
-    'no_account_signup': 'No account? Sign up',
-    'have_account_login': 'Have an account? Login',
-    'change_language': 'Change Language',
-    'invalid_credentials': 'Invalid credentials',
-    'account_exists': 'Account already exists',
-    'complete_profile': 'Complete Your Profile',
-    'help_personalize': 'Help us personalize your experience',
-    'name': 'Name',
-    'enter_name': 'Enter your name',
-    'state': 'State',
-    'select_state': 'Select State',
-    'district': 'District',
-    'search_district': 'Search District',
-    'market_tab': 'Market',
-    'survey_market': 'Market',
-    'search_market': 'Search Market',
-    'crops': 'Crops',
-    'search_crops': 'Search Crops',
-    'complete_setup': 'Complete Setup',
-    'please_fill_fields': 'Please fill in all fields',
-    'back': 'Back',
-    'update_profile': 'Update your profile information',
-    'save_changes': 'Save Changes',
+    // Header
+    welcome_back: 'Welcome back',
+    settings: 'Settings',
+    logout: 'Logout',
+    
+    // Navigation
+    home: 'Home',
+    market_tab: 'Market',
+    sell: 'Sell',
+    history: 'History',
+    
+    // Main sections
+    quick_actions: 'Quick Actions',
+    active_crops: 'Active Crops',
+    market_news: 'Market News',
+    weather: 'Weather',
+    
+    // Quick Actions
+    add_crop: 'Add Crop',
+    predict_price: 'Predict Price',
+    add_expense: 'Add Expense',
+    sell_crop: 'Sell Crop',
+    
+    // Crop Watchlist
+    crop_watchlist: 'Crop Watchlist',
+    view_all: 'View All',
+    
+    // Active Crops
+    total_investment: 'Total Investment',
+    days_left: 'days left',
+    no_crops_message: 'No crops added yet. Start by adding your first crop!',
+    
+    // Crop Status
+    land_preparation: 'Land Preparation',
+    sowing: 'Sowing',
+    growing: 'Growing',
+    ready_to_harvest: 'Ready to Harvest',
+    harvested: 'Harvested',
+    
+    // Common
+    back: 'Back',
+    save: 'Save',
+    cancel: 'Cancel',
+    add: 'Add',
+    update: 'Update',
+    delete: 'Delete',
+    
+    // Survey
+    survey_title: 'Tell us about yourself',
+    survey_subtitle: 'Help us personalize your experience',
+    name: 'Full Name',
+    state: 'State',
+    district: 'District',
+    survey_market: 'Preferred Market',
+    crops: 'Crops you grow',
+    complete_survey: 'Complete Setup',
+    
+    // Crop Management
+    crop_name: 'Crop Name',
+    start_date: 'Start Date of Farming',
+    acres: 'Plantation Acres',
+    current_status: 'Current Status',
+    expenses: 'Expenses',
+    add_new_expense: 'Add New Expense',
+    expense_amount: 'Amount',
+    payment_method: 'Payment Method',
+    cash: 'Cash',
+    upi: 'UPI',
+    notes: 'Notes',
+    total_expenses: 'Total Expenses'
   },
   hi: {
-    'welcome_back': 'वापसी पर स्वागत है',
-    'logout': 'लोग आउट',
-    'home': 'होम',
-    'market': 'बाजार',
-    'sell': 'बेचें',
-    'history': 'इतिहास',
-    'settings': 'सेटिंग्स',
-    'smart_farming_platform': 'स्मार्ट फ़ार्मिंग प्लेटफ़ॉर्म',
-    'phone_number': 'फ़ोन नंबर',
-    'password': 'पासवर्ड',
-    'enter_password': 'पासवर्ड दर्ज करें',
-    'login': 'लॉग इन',
-    'create_account': 'खाता बनाएं',
-    'no_account_signup': 'कोई खाता नहीं है? साइन अप करें',
-    'have_account_login': 'क्या आपके पास पहले से ही खाता है? लॉग इन करें',
-    'change_language': 'भाषा बदलें',
-    'invalid_credentials': 'अमान्य क्रेडेंशियल्स',
-    'account_exists': 'अकाउंट पहले से मौजूद है',
-    'complete_profile': 'अपनी प्रोफाइल पूरी करें',
-    'help_personalize': 'अपने अनुभव को निजीकृत करने में हमारी मदद करें',
-    'name': 'नाम',
-    'enter_name': 'अपना नाम दर्ज करें',
-    'state': 'राज्य',
-    'select_state': 'राज्य चुनें',
-    'district': 'जिला',
-    'search_district': 'जिला खोजें',
-    'market_tab': 'बाजार',
-    'survey_market': 'मंडी',
-    'search_market': 'मंडी खोजें',
-    'crops': 'फसलें',
-    'search_crops': 'फसलें खोजें',
-    'complete_setup': 'सेटअप पूरा करें',
-    'please_fill_fields': 'कृपया सभी फ़ील्ड भरें',
-    'back': 'वापस',
-    'update_profile': 'अपनी प्रोफ़ाइल जानकारी अपडेट करें',
-    'save_changes': 'परिवर्तन सहेजें',
-  },
-  kn: {
-    'welcome_back': 'ಮರಳಿ ಸ್ವಾಗತ',
-    'logout': 'ಲಾಗ್ ಔಟ್',
-    'home': 'ಮನೆ',
-    'market': 'ಮಾರುಕಟ್ಟೆ',
-    'sell': 'ಮಾರಾಟ',
-    'history': 'ಇತಿಹಾಸ',
-    'settings': 'ಸೆಟ್ಟಿಂಗ್ಗಳು',
-    'smart_farming_platform': 'ಸ್ಮಾರ್ಟ್ ಫಾರ್ಮಿಂಗ್ ವೇದಿಕೆ',
-    'phone_number': 'ದೂರವಾಣಿ ಸಂಖ್ಯೆ',
-    'password': 'ಗುಪ್ತಪದ',
-    'enter_password': 'ಗುಪ್ತಪದವನ್ನು ನಮೂದಿಸಿ',
-    'login': 'ಲಾಗಿನ್',
-    'create_account': 'ಖಾತೆ ತೆರೆಯಿರಿ',
-    'no_account_signup': 'ಖಾತೆ ಇಲ್ಲವೇ? ಸೈನ್ ಅಪ್ ಮಾಡಿ',
-    'have_account_login': 'ಖಾತೆ ಇದೆಯೇ? ಲಾಗಿನ್',
-    'change_language': 'ಭಾಷೆ ಬದಲಿಸಿ',
-    'invalid_credentials': 'ಅಮಾನ್ಯವಾದ ರುಜುವಾತುಗಳು',
-    'account_exists': 'ಖಾತೆ ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿದೆ',
-    'complete_profile': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಪೂರ್ಣಗೊಳಿಸಿ',
-    'help_personalize': 'ನಿಮ್ಮ ಅನುಭವವನ್ನು ವೈಯಕ್ತೀಕರಿಸಲು ನಮಗೆ ಸಹಾಯ ಮಾಡಿ',
-    'name': 'ಹೆಸರು',
-    'enter_name': 'ನಿಮ್ಮ ಹೆಸರನ್ನು ನಮೂದಿಸಿ',
-    'state': 'ರಾಜ್ಯ',
-    'select_state': 'ರಾಜ್ಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
-    'district': 'ಜಿಲ್ಲೆ',
-    'search_district': 'ಜಿಲ್ಲೆಯನ್ನು ಹುಡುಕಿ',
-    'market_tab': 'ಮಾರುಕಟ್ಟೆ',
-    'survey_market': 'ಮಾರುಕಟ್ಟೆ',
-    'search_market': 'ಮಾರುಕಟ್ಟೆಯನ್ನು ಹುಡುಕಿ',
-    'crops': 'ಬೆಳೆಗಳು',
-    'search_crops': 'ಬೆಳೆಗಳನ್ನು ಹುಡುಕಿ',
-    'complete_setup': 'ಸೆಟಪ್ ಪೂರ್ಣಗೊಳಿಸಿ',
-    'please_fill_fields': 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ',
-    'back': 'ಹಿಂದೆ',
-    'update_profile': 'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿಯನ್ನು ನವೀಕರಿಸಿ',
-    'save_changes': 'ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ',
-  },
-  ta: {
-    'welcome_back': 'மீண்டும் வருக',
-    'logout': 'வெளியேறு',
-    'home': 'வீடு',
-    'market': 'சந்தை',
-    'sell': 'விற்க',
-    'history': 'வரலாறு',
-    'settings': 'அமைப்புகள்',
-    'smart_farming_platform': 'ஸ்மார்ட் விவசாய தளம்',
-    'phone_number': 'தொலைபேசி எண்',
-    'password': 'கடவுச்சொல்',
-    'enter_password': 'கடவுச்சொல்லை உள்ளிடவும்',
-    'login': 'உள்நுழைய',
-    'create_account': 'கணக்கை உருவாக்கு',
-    'no_account_signup': 'கணக்கு இல்லையா? பதிவு செய்க',
-    'have_account_login': 'ஏற்கனவே கணக்கு உள்ளதா? உள்நுழைக',
-    'change_language': 'மொழியை மாற்று',
-    'invalid_credentials': 'தவறான சான்றுகள்',
-    'account_exists': 'கணக்கு ஏற்கனவே உள்ளது',
-    'complete_profile': 'உங்கள் விவரத்தை பூர்த்தி செய்யவும்',
-    'help_personalize': 'உங்கள் அனுபவத்தை தனிப்பயனாக்க எங்களுக்கு உதவுங்கள்',
-    'name': 'பெயர்',
-    'enter_name': 'உங்கள் பெயரை உள்ளிடவும்',
-    'state': 'மாநிலம்',
-    'select_state': 'மாநிலத்தைத் தேர்ந்தெடுக்கவும்',
-    'district': 'மாவட்டம்',
-    'search_district': 'மாவட்டத்தைத் தேடுங்கள்',
-    'market_tab': 'சந்தை',
-    'survey_market': 'சந்தை',
-    'search_market': 'சந்தையைத் தேடுங்கள்',
-    'crops': 'பயிர்கள்',
-    'search_crops': 'பயிர்களைத் தேடுங்கள்',
-    'complete_setup': 'அமைவை நிறைவு செய்க',
-    'please_fill_fields': 'எல்லா புலங்களையும் நிரப்பவும்',
-    'back': 'பின்',
-    'update_profile': 'உங்கள் சுயவிவரத் தகவலைப் புதுப்பிக்கவும்',
-    'save_changes': 'மாற்றங்களைச் சேமிக்கவும்',
-  },
-  te: {
-    'welcome_back': 'తిరిగి స్వాగతం',
-    'logout': 'నిష్క్రమించు',
-    'home': 'హోమ్',
-    'market': 'మార్కెట్',
-    'sell': 'అమ్మకం',
-    'history': 'చరిత్ర',
-    'settings': 'సెట్టింగులు',
-    'smart_farming_platform': 'స్మార్ట్ ఫార్మింగ్ వేదిక',
-    'phone_number': 'ఫోన్ నంబర్',
-    'password': 'సంకేతపదం',
-    'enter_password': 'సంకేతపదాన్ని నమోదు చేయండి',
-    'login': 'ప్రవేశించండి',
-    'create_account': 'ఖాతాను సృష్టించు',
-    'no_account_signup': 'ఖాతా లేదా? సైన్ అప్ చేయండి',
-    'have_account_login': 'ఖాతా ఉందా? ప్రవేశించండి',
-    'change_language': 'భాష మార్చు',
-    'invalid_credentials': 'చెల్లని ఆధారాలు',
-    'account_exists': 'ఖాతా ఇప్పటికే ఉంది',
-    'complete_profile': 'మీ ప్రొఫైల్ను పూర్తి చేయండి',
-    'help_personalize': 'మీ అనుభవాన్ని వ్యక్తిగతీకరించడానికి మాకు సహాయపడండి',
-    'name': 'పేరు',
-    'enter_name': 'మీ పేరును నమోదు చేయండి',
-    'state': 'రాష్ట్రం',
-    'select_state': 'రాష్ట్రాన్ని ఎంచుకోండి',
-    'district': 'జిల్లా',
-    'search_district': 'జిల్లాను శోధించండి',
-    'market_tab': 'మార్కెట్',
-    'survey_market': 'మార్కెట్',
-    'search_market': 'మార్కెట్ను శోధించండి',
-    'crops': 'పంటలు',
-    'search_crops': 'పంటలను శోధించండి',
-    'complete_setup': 'సెటప్ పూర్తి చేయండి',
-    'please_fill_fields': 'దయచేసి అన్ని ఖాళీలను పూరించండి',
-    'back': 'వెనుకకు',
-    'update_profile': 'మీ ప్రొఫైల్ సమాచారాన్ని నవీకరించండి',
-    'save_changes': 'మార్పులను సేవ్ చేయండి',
-  },
-  ml: {
-    'welcome_back': 'തിരികെ സ്വാഗതം',
-    'logout': 'പുറത്ത് പോകുക',
-    'home': 'ഹോം',
-    'market': 'മാർക്കറ്റ്',
-    'sell': 'വിൽക്കുക',
-    'history': 'ചരിത്രം',
-    'settings': 'ക്രമീകരണങ്ങൾ',
-    'smart_farming_platform': 'സ്മാർട്ട് ഫാമിംഗ് പ്ലാറ്റ്ഫോം',
-    'phone_number': 'ഫോൺ നമ്പർ',
-    'password': 'പാസ്‌വേഡ്',
-    'enter_password': 'പാസ്‌വേഡ് നൽകുക',
-    'login': 'ലോഗിൻ',
-    'create_account': 'അക്കൗണ്ട് ഉണ്ടാക്കുക',
-    'no_account_signup': 'അക്കൗണ്ടില്ലേ? സൈൻ അപ്പ് ചെയ്യുക',
-    'have_account_login': 'അക്കൗണ്ടുണ്ടോ? ലോഗിൻ ചെയ്യുക',
-    'change_language': 'ഭാഷ മാറ്റുക',
-    'invalid_credentials': 'അസാധുവായ ക്രെഡൻഷ്യലുകൾ',
-    'account_exists': 'അക്കൗണ്ട് നിലവിലുണ്ട്',
-    'complete_profile': 'നിങ്ങളുടെ പ്രൊഫൈൽ പൂർത്തിയാക്കുക',
-    'help_personalize': 'നിങ്ങളുടെ അനുഭവം വ്യക്തിഗതമാക്കാൻ ഞങ്ങളെ സഹായിക്കുക',
-    'name': 'പേര്',
-    'enter_name': 'നിങ്ങളുടെ പേര് നൽകുക',
-    'state': 'സംസ്ഥാനം',
-    'select_state': 'സംസ്ഥാനം തിരഞ്ഞെടുക്കുക',
-    'district': 'ജില്ല',
-    'search_district': 'ജില്ല തിരയുക',
-    'market_tab': 'മാർക്കറ്റ്',
-    'survey_market': 'ചന്ത',
-    'search_market': 'ചന്ത കണ്ടെത്തുക',
-    'crops': 'വിളകൾ',
-    'search_crops': 'വിളകൾ തിരയുക',
-    'complete_setup': 'സജ്ജീകരണം പൂർത്തിയാക്കുക',
-    'please_fill_fields': 'എല്ലാ ഫീൽഡുകളും പൂരിപ്പിക്കുക',
-    'back': 'പിന്നിലേക്ക്',
-    'update_profile': 'നിങ്ങളുടെ പ്രൊഫൈൽ വിവരങ്ങൾ അപ്ഡേറ്റ് ചെയ്യുക',
-    'save_changes': 'മാറ്റങ്ങൾ സേവ് ചെയ്യുക',
-  },
+    // Header
+    welcome_back: 'वापसी पर स्वागत है',
+    settings: 'सेटिंग्स',
+    logout: 'लॉग आउट',
+    
+    // Navigation
+    home: 'होम',
+    market_tab: 'बाज़ार',
+    sell: 'बेचें',
+    history: 'इतिहास',
+    
+    // Main sections
+    quick_actions: 'त्वरित कार्य',
+    active_crops: 'सक्रिय फसलें',
+    market_news: 'बाज़ार समाचार',
+    weather: 'मौसम',
+    
+    // Quick Actions
+    add_crop: 'फसल जोड़ें',
+    predict_price: 'मूल्य का अनुमान',
+    add_expense: 'खर्च जोड़ें',
+    sell_crop: 'फसल बेचें',
+    
+    // Crop Watchlist
+    crop_watchlist: 'फसल वॉचलिस्ट',
+    view_all: 'सभी देखें',
+    
+    // Active Crops
+    total_investment: 'कुल निवेश',
+    days_left: 'दिन बचे',
+    no_crops_message: 'अभी तक कोई फसल नहीं जोड़ी गई। अपनी पहली फसल जोड़कर शुरुआत करें!',
+    
+    // Crop Status
+    land_preparation: 'भूमि तैयारी',
+    sowing: 'बुआई',
+    growing: 'बढ़ रहा है',
+    ready_to_harvest: 'कटाई के लिए तैयार',
+    harvested: 'कटाई हो गई',
+    
+    // Common
+    back: 'वापस',
+    save: 'सेव करें',
+    cancel: 'रद्द करें',
+    add: 'जोड़ें',
+    update: 'अपडेट करें',
+    delete: 'हटाएं',
+    
+    // Survey
+    survey_title: 'अपने बारे में बताएं',
+    survey_subtitle: 'अपने अनुभव को व्यक्तिगत बनाने में हमारी मदद करें',
+    name: 'पूरा नाम',
+    state: 'राज्य',
+    district: 'जिला',
+    survey_market: 'पसंदीदा बाज़ार',
+    crops: 'आप जो फसलें उगाते हैं',
+    complete_survey: 'सेटअप पूरा करें',
+    
+    // Crop Management
+    crop_name: 'फसल का नाम',
+    start_date: 'खेती शुरू करने की तारीख',
+    acres: 'रोपण एकड़',
+    current_status: 'वर्तमान स्थिति',
+    expenses: 'खर्चे',
+    add_new_expense: 'नया खर्च जोड़ें',
+    expense_amount: 'राशि',
+    payment_method: 'भुगतान विधि',
+    cash: 'नकद',
+    upi: 'यूपीआई',
+    notes: 'नोट्स',
+    total_expenses: 'कुल खर्च'
+  }
 };
 
-export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>((localStorage.getItem('language') as Language) || 'en');
-
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState('en');
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
-  };
-
-  const contextValue: LanguageContextProps = {
-    language,
-    setLanguage,
-    t,
+    return translations[language as keyof typeof translations]?.[key as keyof typeof translations.en] || key;
   };
 
   return (
-    <LanguageContext.Provider value={contextValue}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -272,7 +172,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;

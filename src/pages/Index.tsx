@@ -11,6 +11,8 @@ import ActiveCropsSnapshot from '@/components/ActiveCropsSnapshot';
 import MarketNews from '@/components/MarketNews';
 import BottomNavigation from '@/components/BottomNavigation';
 import FloatingChatButton from '@/components/FloatingChatButton';
+import CropWatchlistPage from './CropWatchlistPage';
+import ActiveCropsPage from './ActiveCropsPage';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface IndexProps {
@@ -20,12 +22,33 @@ interface IndexProps {
 
 const Index = ({ user, onShowSettings }: IndexProps) => {
   const [activeTab, setActiveTab] = useState('home');
+  const [currentView, setCurrentView] = useState('home');
   const { t } = useLanguage();
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
     window.location.reload();
   };
+
+  const handleViewAllCrops = () => {
+    setCurrentView('cropWatchlist');
+  };
+
+  const handleActiveCardsClick = () => {
+    setCurrentView('activeCrops');
+  };
+
+  const handleBackToHome = () => {
+    setCurrentView('home');
+  };
+
+  if (currentView === 'cropWatchlist') {
+    return <CropWatchlistPage user={user} onBack={handleBackToHome} />;
+  }
+
+  if (currentView === 'activeCrops') {
+    return <ActiveCropsPage user={user} onBack={handleBackToHome} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
@@ -70,7 +93,11 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
       {/* Main Content */}
       <div className="pb-20 px-4 space-y-6 pt-6">
         {/* Crop Watchlist */}
-        <CropWatchlist userCrops={user?.crops || []} userMarket={user?.market} />
+        <CropWatchlist 
+          userCrops={user?.crops || []} 
+          userMarket={user?.market} 
+          onViewAll={handleViewAllCrops}
+        />
         
         {/* Quick Actions */}
         <QuickActions />
@@ -78,11 +105,15 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
         {/* Weather & Active Crops Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <WeatherCard district={user?.district} />
-          <ActiveCropsSnapshot userCrops={user?.crops || []} />
+          <div onClick={handleActiveCardsClick} className="cursor-pointer">
+            <ActiveCropsSnapshot userCrops={user?.crops || []} />
+          </div>
         </div>
         
         {/* Market News */}
-        <MarketNews />
+        <div className="cursor-pointer">
+          <MarketNews />
+        </div>
       </div>
 
       {/* Bottom Navigation */}

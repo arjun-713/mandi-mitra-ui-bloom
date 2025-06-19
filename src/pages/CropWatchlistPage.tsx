@@ -1,19 +1,17 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-interface CropWatchlistProps {
-  userCrops?: string[];
-  userMarket?: string;
-  onViewAll?: () => void;
+interface CropWatchlistPageProps {
+  user: any;
+  onBack: () => void;
 }
 
-const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistProps) => {
+const CropWatchlistPage = ({ user, onBack }: CropWatchlistPageProps) => {
   const { t } = useLanguage();
 
-  // Generate mock price data for user's crops
   const generateMockPrice = (cropName: string) => {
     const basePrice = Math.floor(Math.random() * 3000) + 1000;
     const change = Math.floor(Math.random() * 200) - 100;
@@ -25,15 +23,14 @@ const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistP
       currentPrice: `₹${basePrice.toLocaleString()}`,
       priceChange: `${isPositive ? '+' : ''}₹${Math.abs(change)}`,
       changePercent: `${isPositive ? '+' : ''}${changePercent}%`,
-      mandiName: userMarket || 'Local Mandi',
+      mandiName: user?.market || 'Local Mandi',
       trend: isPositive ? 'up' : 'down',
       isPositive
     };
   };
 
-  // Use user's crops or fallback to default crops
-  const cropsToShow = userCrops.length > 0 
-    ? userCrops.slice(0, 3).map(generateMockPrice)
+  const allCrops = user?.crops?.length > 0 
+    ? user.crops.map(generateMockPrice)
     : [
         {
           name: 'Wheat',
@@ -65,20 +62,25 @@ const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistP
       ];
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">{t('crop_watchlist')}</h2>
-        <Button 
-          variant="ghost" 
-          className="text-primary text-sm"
-          onClick={onViewAll}
-        >
-          {t('view_all')}
-        </Button>
+    <div className="min-h-screen bg-gray-50 font-inter">
+      <div className="bg-white shadow-sm border-b">
+        <div className="px-4 py-4">
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={onBack}
+              className="hover:bg-gray-100"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-xl font-bold text-primary">{t('crop_watchlist')}</h1>
+          </div>
+        </div>
       </div>
-      
-      <div className="space-y-3">
-        {cropsToShow.map((crop, index) => (
+
+      <div className="px-4 py-6 space-y-3">
+        {allCrops.map((crop, index) => (
           <Card key={index} className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -111,4 +113,4 @@ const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistP
   );
 };
 
-export default CropWatchlist;
+export default CropWatchlistPage;
