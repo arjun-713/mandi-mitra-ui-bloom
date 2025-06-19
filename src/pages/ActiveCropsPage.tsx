@@ -215,25 +215,26 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg font-semibold text-gray-900">{crop.name}</h3>
-                    <Select 
-                      value={crop.status} 
-                      onValueChange={(value) => {
-                        const updatedCrop = { ...crop, status: value };
-                        handleUpdateCrop(updatedCrop);
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Land Preparation">Land Preparation</SelectItem>
-                        <SelectItem value="Sowing">Sowing</SelectItem>
-                        <SelectItem value="Growing">Growing</SelectItem>
-                        <SelectItem value="Ready to Harvest">Ready to Harvest</SelectItem>
-                        <SelectItem value="Harvested">Harvested</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Select 
+                        value={crop.status} 
+                        onValueChange={(value) => {
+                          const updatedCrop = { ...crop, status: value };
+                          handleUpdateCrop(updatedCrop);
+                        }}
+                      >
+                        <SelectTrigger className="w-48">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Land Preparation">Land Preparation</SelectItem>
+                          <SelectItem value="Sowing">Sowing</SelectItem>
+                          <SelectItem value="Growing">Growing</SelectItem>
+                          <SelectItem value="Ready to Harvest">Ready to Harvest</SelectItem>
+                          <SelectItem value="Harvested">Harvested</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   
                   <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
