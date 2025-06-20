@@ -1,6 +1,6 @@
 
 // Weather API service
-// You'll need to provide your weather API key for this to work
+// Using OpenWeatherMap API
 
 interface WeatherData {
   temperature: number;
@@ -12,7 +12,7 @@ interface WeatherData {
 }
 
 export class WeatherService {
-  private static apiKey: string = ''; // TODO: Add your weather API key
+  private static apiKey: string = '9a45fb35ef1cbbd2f6664f2997826aae';
   private static baseUrl = 'https://api.openweathermap.org/data/2.5';
 
   static setApiKey(key: string) {
@@ -21,7 +21,6 @@ export class WeatherService {
 
   static async getCurrentWeather(city: string): Promise<WeatherData> {
     if (!this.apiKey) {
-      // Return mock data if no API key
       return this.getMockWeatherData();
     }
 
@@ -31,7 +30,7 @@ export class WeatherService {
       );
       
       if (!response.ok) {
-        throw new Error('Weather API request failed');
+        throw new Error(`Weather API request failed: ${response.status}`);
       }
 
       const data = await response.json();

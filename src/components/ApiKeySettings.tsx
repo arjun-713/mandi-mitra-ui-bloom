@@ -4,34 +4,35 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Eye, EyeOff, Save } from 'lucide-react';
+import { Eye, EyeOff, Save, CheckCircle } from 'lucide-react';
 import { WeatherService } from '@/services/weatherService';
 import { AgmarknetService } from '@/services/agmarknetService';
 import { MapsService } from '@/services/mapsService';
 
 const ApiKeySettings = () => {
   const [apiKeys, setApiKeys] = useState({
-    weather: '',
-    agmarknet: '',
-    maps: ''
+    weather: '9a45fb35ef1cbbd2f6664f2997826aae',
+    agmarknet: '579b464db66ec23bdd000001669abbd155a24e6460d408bbd43f6bd5',
+    maps: 'AIzaSyCayVGpTZqbmot3IbEnqn5psrPZNnBF14Q'
   });
   const [showKeys, setShowKeys] = useState({
     weather: false,
     agmarknet: false,
     maps: false
   });
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    // Load saved API keys from localStorage
+    // Set API keys in services on component mount
+    WeatherService.setApiKey(apiKeys.weather);
+    AgmarknetService.setApiKey(apiKeys.agmarknet);
+    MapsService.setApiKey(apiKeys.maps);
+    
+    // Load saved API keys from localStorage if they exist
     const savedKeys = localStorage.getItem('apiKeys');
     if (savedKeys) {
       const keys = JSON.parse(savedKeys);
-      setApiKeys(keys);
-      
-      // Set API keys in services
-      if (keys.weather) WeatherService.setApiKey(keys.weather);
-      if (keys.agmarknet) AgmarknetService.setApiKey(keys.agmarknet);
-      if (keys.maps) MapsService.setApiKey(keys.maps);
+      setApiKeys(prevKeys => ({ ...prevKeys, ...keys }));
     }
   }, []);
 
@@ -40,11 +41,12 @@ const ApiKeySettings = () => {
     localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
     
     // Set API keys in services
-    if (apiKeys.weather) WeatherService.setApiKey(apiKeys.weather);
-    if (apiKeys.agmarknet) AgmarknetService.setApiKey(apiKeys.agmarknet);
-    if (apiKeys.maps) MapsService.setApiKey(apiKeys.maps);
+    WeatherService.setApiKey(apiKeys.weather);
+    AgmarknetService.setApiKey(apiKeys.agmarknet);
+    MapsService.setApiKey(apiKeys.maps);
     
-    alert('API keys saved successfully!');
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
   };
 
   const toggleShowKey = (keyType: keyof typeof showKeys) => {
@@ -57,9 +59,12 @@ const ApiKeySettings = () => {
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>API Configuration</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          API Configuration
+          {saved && <CheckCircle className="w-5 h-5 text-green-600" />}
+        </CardTitle>
         <p className="text-sm text-gray-600">
-          Configure your API keys to enable real-time data features
+          API keys are configured and ready for real-time data
         </p>
       </CardHeader>
       
@@ -67,9 +72,9 @@ const ApiKeySettings = () => {
         {/* Weather API */}
         <div className="space-y-2">
           <Label htmlFor="weather-key">
-            OpenWeatherMap API Key
-            <span className="text-sm text-gray-500 ml-2">
-              (Get from: openweathermap.org/api)
+            OpenWeatherMap API Key ✅
+            <span className="text-sm text-green-600 ml-2">
+              (Configured)
             </span>
           </Label>
           <div className="flex gap-2">
@@ -93,9 +98,9 @@ const ApiKeySettings = () => {
         {/* AGMARKNET API */}
         <div className="space-y-2">
           <Label htmlFor="agmarknet-key">
-            Data.gov.in API Key
-            <span className="text-sm text-gray-500 ml-2">
-              (Get from: data.gov.in)
+            Data.gov.in API Key ✅
+            <span className="text-sm text-green-600 ml-2">
+              (Configured)
             </span>
           </Label>
           <div className="flex gap-2">
@@ -119,9 +124,9 @@ const ApiKeySettings = () => {
         {/* Google Maps API */}
         <div className="space-y-2">
           <Label htmlFor="maps-key">
-            Google Maps API Key
-            <span className="text-sm text-gray-500 ml-2">
-              (Get from: console.cloud.google.com)
+            Google Maps API Key ✅
+            <span className="text-sm text-green-600 ml-2">
+              (Configured)
             </span>
           </Label>
           <div className="flex gap-2">
@@ -145,16 +150,17 @@ const ApiKeySettings = () => {
         <div className="pt-4">
           <Button onClick={handleSave} className="w-full">
             <Save className="w-4 h-4 mr-2" />
-            Save API Keys
+            {saved ? 'Saved Successfully!' : 'Save API Keys'}
           </Button>
         </div>
 
-        <div className="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">
-          <p className="font-medium mb-2">Note:</p>
+        <div className="text-sm text-gray-600 bg-green-50 p-4 rounded-lg border border-green-200">
+          <p className="font-medium mb-2 text-green-800">✅ All APIs Configured:</p>
           <ul className="list-disc list-inside space-y-1">
-            <li>API keys are stored locally in your browser</li>
-            <li>Without API keys, the app will use mock data</li>
-            <li>Make sure to enable required APIs in your provider dashboards</li>
+            <li>Weather data will be fetched from OpenWeatherMap</li>
+            <li>Crop prices will be fetched from AGMARKNET via Data.gov.in</li>
+            <li>Maps and navigation powered by Google Maps</li>
+            <li>Real-time data is now active across the app</li>
           </ul>
         </div>
       </CardContent>

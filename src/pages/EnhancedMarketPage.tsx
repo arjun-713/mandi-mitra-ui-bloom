@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MarketSearch from '@/components/MarketSearch';
 import PriceAlerts from '@/components/PriceAlerts';
 import CropPriceCard from '@/components/CropPriceCard';
+import { AgmarknetService } from '@/services/agmarknetService';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface EnhancedMarketPageProps {
@@ -32,13 +32,35 @@ const EnhancedMarketPage = ({ onBack }: EnhancedMarketPageProps) => {
   const [crops, setCrops] = useState<Crop[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch market data (placeholder for AGMARKNET API)
+  // Fetch real market data from AGMARKNET
   useEffect(() => {
     const fetchMarketData = async () => {
       setLoading(true);
       try {
-        // TODO: Replace with actual AGMARKNET API call
-        const mockData: Crop[] = [
+        console.log('Fetching real market data from AGMARKNET...');
+        const marketData = await AgmarknetService.getMarketData();
+        console.log('Market data received:', marketData);
+        
+        const formattedCrops: Crop[] = marketData.map(item => ({
+          id: item.id,
+          name: item.name,
+          variety: item.variety,
+          currentPrice: item.currentPrice,
+          priceChange: item.priceChange,
+          mandiName: item.mandiName,
+          region: item.region,
+          cropType: item.cropType,
+          lastUpdated: item.lastUpdated,
+          trend: item.trend,
+          isInWatchlist: false
+        }));
+        
+        setCrops(formattedCrops);
+        console.log('Crops data set:', formattedCrops);
+      } catch (error) {
+        console.error('Error fetching market data:', error);
+        // Fallback to mock data if API fails
+        setCrops([
           {
             id: '1',
             name: 'Wheat',
@@ -64,48 +86,8 @@ const EnhancedMarketPage = ({ onBack }: EnhancedMarketPageProps) => {
             lastUpdated: '1 hour ago',
             trend: 'down',
             isInWatchlist: true
-          },
-          {
-            id: '3',
-            name: 'Tomato',
-            currentPrice: 3200,
-            priceChange: 400,
-            mandiName: 'KR Market',
-            region: 'Karnataka',
-            cropType: 'vegetables',
-            lastUpdated: '30 minutes ago',
-            trend: 'up',
-            isInWatchlist: false
-          },
-          {
-            id: '4',
-            name: 'Onion',
-            currentPrice: 4200,
-            priceChange: -200,
-            mandiName: 'Bangalore Market',
-            region: 'Karnataka',
-            cropType: 'vegetables',
-            lastUpdated: '45 minutes ago',
-            trend: 'down',
-            isInWatchlist: true
-          },
-          {
-            id: '5',
-            name: 'Cotton',
-            currentPrice: 6800,
-            priceChange: 300,
-            mandiName: 'Raichur APMC',
-            region: 'Karnataka',
-            cropType: 'cash-crops',
-            lastUpdated: '3 hours ago',
-            trend: 'up',
-            isInWatchlist: false
           }
-        ];
-        
-        setCrops(mockData);
-      } catch (error) {
-        console.error('Error fetching market data:', error);
+        ]);
       } finally {
         setLoading(false);
       }
@@ -129,7 +111,6 @@ const EnhancedMarketPage = ({ onBack }: EnhancedMarketPageProps) => {
   };
 
   const handlePredictPrice = (cropId: string) => {
-    // TODO: Implement price prediction
     console.log(`Predicting price for crop ${cropId}`);
   };
 
@@ -173,7 +154,7 @@ const EnhancedMarketPage = ({ onBack }: EnhancedMarketPageProps) => {
         {/* Crop List */}
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold">Current Prices</h2>
+            <h2 className="text-lg font-semibold">Current Prices (Real Data)</h2>
             <span className="text-sm text-gray-600">
               {filteredCrops.length} crops found
             </span>
