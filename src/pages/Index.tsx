@@ -18,6 +18,7 @@ import SellPage from './SellPage';
 import HistoryPage from './HistoryPage';
 import MandiPage from './MandiPage';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface IndexProps {
   user: any;
@@ -29,6 +30,7 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
   const [currentView, setCurrentView] = useState('home');
   const [userData, setUserData] = useState(user);
   const { t } = useLanguage();
+  const { toast } = useToast();
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
@@ -59,6 +61,30 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
     
     // Update localStorage
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+  };
+
+  // Quick Actions handlers
+  const handleAddCrop = () => {
+    setCurrentView('activeCrops');
+  };
+
+  const handlePredictPrice = () => {
+    setCurrentView('market');
+    setActiveTab('market');
+  };
+
+  const handleAddExpense = () => {
+    setCurrentView('history');
+    setActiveTab('history');
+    toast({
+      title: "Add Expense",
+      description: "Navigate to History screen to add expenses",
+    });
+  };
+
+  const handleSellCrop = () => {
+    setCurrentView('sell');
+    setActiveTab('sell');
   };
 
   // Handle different views
@@ -162,7 +188,12 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
         />
         
         {/* Quick Actions */}
-        <QuickActions />
+        <QuickActions 
+          onAddCrop={handleAddCrop}
+          onPredictPrice={handlePredictPrice}
+          onAddExpense={handleAddExpense}
+          onSellCrop={handleSellCrop}
+        />
         
         {/* Weather & Active Crops Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

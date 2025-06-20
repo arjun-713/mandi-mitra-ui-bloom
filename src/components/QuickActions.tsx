@@ -3,7 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Plus, TrendingUp, Receipt, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const QuickActions = () => {
+interface QuickActionsProps {
+  onAddCrop: () => void;
+  onPredictPrice: () => void;
+  onAddExpense: () => void;
+  onSellCrop: () => void;
+}
+
+const QuickActions = ({ onAddCrop, onPredictPrice, onAddExpense, onSellCrop }: QuickActionsProps) => {
   const { t } = useLanguage();
   
   const actions = [
@@ -11,25 +18,29 @@ const QuickActions = () => {
       icon: Plus,
       label: t('add_crop'),
       color: 'bg-primary hover:bg-green-700',
-      textColor: 'text-white'
+      textColor: 'text-white',
+      onClick: onAddCrop
     },
     {
       icon: TrendingUp,
       label: t('predict_price'),
       color: 'bg-blue-500 hover:bg-blue-600',
-      textColor: 'text-white'
+      textColor: 'text-white',
+      onClick: onPredictPrice
     },
     {
       icon: Receipt,
       label: t('add_expense'),
       color: 'bg-orange-500 hover:bg-orange-600',
-      textColor: 'text-white'
+      textColor: 'text-white',
+      onClick: onAddExpense
     },
     {
       icon: ShoppingCart,
       label: t('sell_crop'),
       color: 'bg-purple-500 hover:bg-purple-600',
-      textColor: 'text-white'
+      textColor: 'text-white',
+      onClick: onSellCrop
     }
   ];
 
@@ -44,6 +55,7 @@ const QuickActions = () => {
             <Button
               key={index}
               className={`${action.color} ${action.textColor} h-20 flex flex-col items-center justify-center gap-2 rounded-xl shadow-sm`}
+              onClick={action.onClick}
             >
               <IconComponent className="w-6 h-6" />
               <span className="text-sm font-medium">{action.label}</span>
