@@ -13,7 +13,8 @@ import BottomNavigation from '@/components/BottomNavigation';
 import FloatingChatButton from '@/components/FloatingChatButton';
 import CropWatchlistPage from './CropWatchlistPage';
 import ActiveCropsPage from './ActiveCropsPage';
-import MarketPage from './MarketPage';
+import EnhancedMarketPage from './EnhancedMarketPage';
+import SellPage from './SellPage';
 import HistoryPage from './HistoryPage';
 import MandiPage from './MandiPage';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -78,7 +79,16 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
   if (currentView === 'market') {
     return (
       <>
-        <MarketPage />
+        <EnhancedMarketPage onBack={handleBackToHome} />
+        <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      </>
+    );
+  }
+
+  if (currentView === 'sell') {
+    return (
+      <>
+        <SellPage onBack={handleBackToHome} />
         <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
       </>
     );
