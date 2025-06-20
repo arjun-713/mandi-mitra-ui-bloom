@@ -12,11 +12,11 @@ const BottomNavigation = ({ activeTab, onTabChange }: BottomNavigationProps) => 
   const { t } = useLanguage();
   
   const tabs = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'market', label: 'Market', icon: TrendingUp },
-    { id: 'sell', label: 'Sell', icon: DollarSign },
-    { id: 'history', label: 'History', icon: History },
-    { id: 'mandi', label: 'Mandi', icon: MapPin }
+    { id: 'home', label: t('home'), icon: Home },
+    { id: 'market', label: t('market_tab'), icon: TrendingUp },
+    { id: 'sell', label: t('sell'), icon: DollarSign },
+    { id: 'history', label: t('history'), icon: History },
+    { id: 'mandi', label: t('mandi'), icon: MapPin }
   ];
 
   return (

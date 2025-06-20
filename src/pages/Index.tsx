@@ -13,6 +13,9 @@ import BottomNavigation from '@/components/BottomNavigation';
 import FloatingChatButton from '@/components/FloatingChatButton';
 import CropWatchlistPage from './CropWatchlistPage';
 import ActiveCropsPage from './ActiveCropsPage';
+import MarketPage from './MarketPage';
+import HistoryPage from './HistoryPage';
+import MandiPage from './MandiPage';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface IndexProps {
@@ -31,6 +34,11 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
     window.location.reload();
   };
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setCurrentView(tab);
+  };
+
   const handleViewAllCrops = () => {
     setCurrentView('cropWatchlist');
   };
@@ -41,6 +49,7 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
 
   const handleBackToHome = () => {
     setCurrentView('home');
+    setActiveTab('home');
   };
 
   const handleUpdateUserCrops = (crops: any[]) => {
@@ -51,6 +60,7 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
     localStorage.setItem('currentUser', JSON.stringify(updatedUser));
   };
 
+  // Handle different views
   if (currentView === 'cropWatchlist') {
     return <CropWatchlistPage user={userData} onBack={handleBackToHome} />;
   }
@@ -62,6 +72,33 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
         onBack={handleBackToHome} 
         onUpdateUserCrops={handleUpdateUserCrops}
       />
+    );
+  }
+
+  if (currentView === 'market') {
+    return (
+      <>
+        <MarketPage />
+        <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      </>
+    );
+  }
+
+  if (currentView === 'history') {
+    return (
+      <>
+        <HistoryPage onBack={handleBackToHome} />
+        <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      </>
+    );
+  }
+
+  if (currentView === 'mandi') {
+    return (
+      <>
+        <MandiPage onBack={handleBackToHome} />
+        <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+      </>
     );
   }
 
@@ -135,7 +172,7 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
       
       {/* Floating Chat Button */}
       <FloatingChatButton />

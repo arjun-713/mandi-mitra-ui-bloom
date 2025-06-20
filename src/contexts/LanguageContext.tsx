@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 
 interface LanguageContextType {
@@ -12,6 +13,19 @@ export type Language = 'en' | 'hi' | 'ta' | 'te' | 'kn' | 'mr';
 
 const translations = {
   en: {
+    // Login & Auth
+    login: 'Login',
+    create_account: 'Create Account',
+    phone_number: 'Phone Number',
+    password: 'Password',
+    enter_password: 'Enter Password',
+    smart_farming_platform: 'Smart Farming Platform',
+    invalid_credentials: 'Invalid phone number or password',
+    account_exists: 'Account already exists with this phone number',
+    no_account_signup: "Don't have an account? Sign Up",
+    have_account_login: 'Already have an account? Login',
+    change_language: 'Change Language',
+    
     // Header
     welcome_back: 'Welcome back',
     settings: 'Settings',
@@ -22,6 +36,7 @@ const translations = {
     market_tab: 'Market',
     sell: 'Sell',
     history: 'History',
+    mandi: 'Mandi',
     
     // Main sections
     quick_actions: 'Quick Actions',
@@ -50,6 +65,16 @@ const translations = {
     growing: 'Growing',
     ready_to_harvest: 'Ready to Harvest',
     harvested: 'Harvested',
+    
+    // Weather
+    todays_weather: "Today's Weather",
+    humidity: 'Humidity',
+    wind: 'Wind',
+    feels_like: 'Feels Like',
+    sunny: 'Sunny',
+    partly_cloudy: 'Partly Cloudy',
+    cloudy: 'Cloudy',
+    light_rain: 'Light Rain',
     
     // Common
     back: 'Back',
@@ -84,6 +109,19 @@ const translations = {
     total_expenses: 'Total Expenses'
   },
   hi: {
+    // Login & Auth
+    login: 'लॉगिन',
+    create_account: 'खाता बनाएं',
+    phone_number: 'फोन नंबर',
+    password: 'पासवर्ड',
+    enter_password: 'पासवर्ड दर्ज करें',
+    smart_farming_platform: 'स्मार्ट कृषि प्लेटफॉर्म',
+    invalid_credentials: 'गलत फोन नंबर या पासवर्ड',
+    account_exists: 'इस फोन नंबर से खाता पहले से मौजूद है',
+    no_account_signup: 'खाता नहीं है? साइन अप करें',
+    have_account_login: 'पहले से खाता है? लॉगिन करें',
+    change_language: 'भाषा बदलें',
+    
     // Header
     welcome_back: 'वापसी पर स्वागत है',
     settings: 'सेटिंग्स',
@@ -94,6 +132,7 @@ const translations = {
     market_tab: 'बाज़ार',
     sell: 'बेचें',
     history: 'इतिहास',
+    mandi: 'मंडी',
     
     // Main sections
     quick_actions: 'त्वरित कार्य',
@@ -122,6 +161,16 @@ const translations = {
     growing: 'बढ़ रहा है',
     ready_to_harvest: 'कटाई के लिए तैयार',
     harvested: 'कटाई हो गई',
+    
+    // Weather
+    todays_weather: 'आज का मौसम',
+    humidity: 'नमी',
+    wind: 'हवा',
+    feels_like: 'महसूस होता है',
+    sunny: 'धूप',
+    partly_cloudy: 'आंशिक बादल',
+    cloudy: 'बादल',
+    light_rain: 'हल्की बारिश',
     
     // Common
     back: 'वापस',
