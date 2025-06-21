@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import SellForm from '@/components/SellForm';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface SellPageProps {
   onBack: () => void;
@@ -11,23 +12,56 @@ interface SellPageProps {
 
 const SellPage = ({ onBack }: SellPageProps) => {
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormSubmit = async (formData: any) => {
     setIsSubmitting(true);
     try {
-      // TODO: Submit to backend API
       console.log('Submitting crop listing:', formData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Show success message and redirect
-      alert('Crop listing created successfully!');
+      // Create sale record for history
+      const saleRecord = {
+        id: Date.now().toString(),
+        cropName: formData.cropName,
+        dateSold: new Date().toISOString().split('T')[0],
+        quantitySold: parseInt(formData.quantity),
+        pricePerQuintal: parseInt(formData.expectedPrice),
+        totalEarnings: parseInt(formData.quantity) * parseInt(formData.expectedPrice),
+        expenses: {
+          fertilizer: 0,
+          labor: 0,
+          pesticide: 0,
+          transport: 0,
+          seeds: 0,
+          other: 0
+        },
+        netProfitLoss: parseInt(formData.quantity) * parseInt(formData.expectedPrice),
+        profitMargin: 100 // Will be calculated properly when expenses are added
+      };
+      
+      // Save to localStorage
+      const existingHistory = localStorage.getItem('cropSalesHistory');
+      const history = existingHistory ? JSON.parse(existingHistory) : [];
+      history.unshift(saleRecord); // Add to beginning of array
+      localStorage.setItem('cropSalesHistory', JSON.stringify(history));
+      
+      toast({
+        title: "Success!",
+        description: "Crop listing created and added to your sales history.",
+      });
+      
       onBack();
     } catch (error) {
       console.error('Error creating listing:', error);
-      alert('Error creating listing. Please try again.');
+      toast({
+        title: "Error",
+        description: "Error creating listing. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
