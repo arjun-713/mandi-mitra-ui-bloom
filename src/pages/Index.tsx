@@ -17,6 +17,7 @@ import EnhancedMarketPage from './EnhancedMarketPage';
 import SellPage from './SellPage';
 import HistoryPage from './HistoryPage';
 import MandiPage from './MandiPage';
+import ChatbotPage from './ChatbotPage';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -87,6 +88,16 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
     setActiveTab('sell');
   };
 
+  const handleChatbotClick = () => {
+    setCurrentView('chatbot');
+  };
+
+  const handleCropClick = (cropName: string) => {
+    setCurrentView('market');
+    setActiveTab('market');
+    // You can pass the crop name to the market page if needed
+  };
+
   // Handle different views
   if (currentView === 'cropWatchlist') {
     return <CropWatchlistPage user={userData} onBack={handleBackToHome} />;
@@ -138,6 +149,10 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
     );
   }
 
+  if (currentView === 'chatbot') {
+    return <ChatbotPage onBack={handleBackToHome} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 font-inter">
       {/* Header */}
@@ -185,6 +200,7 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
           userCrops={userData?.crops || []} 
           userMarket={userData?.market} 
           onViewAll={handleViewAllCrops}
+          onCropClick={handleCropClick}
         />
         
         {/* Quick Actions */}
@@ -216,7 +232,7 @@ const Index = ({ user, onShowSettings }: IndexProps) => {
       <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
       
       {/* Floating Chat Button */}
-      <FloatingChatButton />
+      <FloatingChatButton onClick={handleChatbotClick} />
     </div>
   );
 };

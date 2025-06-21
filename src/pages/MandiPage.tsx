@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Navigation, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/contexts/Language Context'
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MandiPageProps {
   onBack: () => void;
