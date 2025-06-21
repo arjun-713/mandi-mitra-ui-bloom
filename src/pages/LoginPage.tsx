@@ -15,6 +15,9 @@ interface LoginPageProps {
 const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [state, setState] = useState('');
+  const [district, setDistrict] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const { t } = useLanguage();
 
@@ -34,13 +37,25 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
       }
     } else {
       // Create new user
+      if (!name || !state || !district) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
       const users = JSON.parse(localStorage.getItem('mandiMitraUsers') || '[]');
       const existingUser = users.find((u: any) => u.phoneNumber === phoneNumber);
       
       if (existingUser) {
         alert(t('account_exists'));
       } else {
-        const newUser = { phoneNumber, password, isNewUser: true };
+        const newUser = { 
+          phoneNumber, 
+          password, 
+          name,
+          state,
+          district,
+          isNewUser: true 
+        };
         users.push(newUser);
         localStorage.setItem('mandiMitraUsers', JSON.stringify(users));
         localStorage.setItem('currentUser', JSON.stringify(newUser));
@@ -61,6 +76,20 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+            
             <div>
               <Label htmlFor="phone">{t('phone_number')}</Label>
               <Input
@@ -72,6 +101,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
                 required
               />
             </div>
+            
             <div>
               <Label htmlFor="password">{t('password')}</Label>
               <Input
@@ -83,6 +113,16 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
                 required
               />
             </div>
+            
+            {!isLogin && (
+              <LocationSelector
+                selectedState={state}
+                selectedDistrict={district}
+                onStateChange={setState}
+                onDistrictChange={setDistrict}
+                showMarket={false}
+              />
+            )}
             
             <Button type="submit" className="w-full bg-primary hover:bg-green-700">
               {isLogin ? t('login') : t('create_account')}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -137,10 +136,6 @@ const EnhancedMarketPage = ({ onBack }: EnhancedMarketPageProps) => {
     return matchesSearch && matchesFilters;
   });
 
-  // Extract unique crop names and markets for prediction
-  const availableCrops = [...new Set(crops.map(crop => crop.name))];
-  const availableMarkets = [...new Set(crops.map(crop => crop.mandiName))];
-
   return (
     <div className="min-h-screen bg-gray-50 font-inter pb-20">
       {/* Header */}
@@ -171,10 +166,7 @@ const EnhancedMarketPage = ({ onBack }: EnhancedMarketPageProps) => {
           </TabsList>
           
           <TabsContent value="predict" className="space-y-4">
-            <PricePrediction 
-              availableCrops={availableCrops}
-              availableMarkets={availableMarkets}
-            />
+            <PricePrediction />
           </TabsContent>
           
           <TabsContent value="alerts" className="space-y-4">

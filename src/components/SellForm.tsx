@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Camera, Plus, MapPin } from 'lucide-react';
+import { CropSelector, LocationSelector } from '@/components';
 
 interface SellFormProps {
   onSubmit: (formData: any) => void;
@@ -19,7 +19,9 @@ const SellForm = ({ onSubmit }: SellFormProps) => {
     quantity: '',
     expectedPrice: '',
     harvestDate: '',
-    location: '',
+    state: '',
+    district: '',
+    market: '',
     transportRange: 50,
     description: '',
     images: [] as File[],
@@ -56,25 +58,11 @@ const SellForm = ({ onSubmit }: SellFormProps) => {
             
             <div>
               <label className="block text-sm font-medium mb-2">Select Crop</label>
-              <div className="space-y-3">
-                {cropOptions.map((category) => (
-                  <div key={category.category}>
-                    <p className="text-sm text-gray-600 mb-1">{category.category}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {category.crops.map((crop) => (
-                        <Badge
-                          key={crop}
-                          variant={formData.cropName === crop ? "default" : "outline"}
-                          className="cursor-pointer"
-                          onClick={() => setFormData(prev => ({ ...prev, cropName: crop }))}
-                        >
-                          {crop}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CropSelector
+                selectedCrop={formData.cropName}
+                onCropChange={(crop) => setFormData(prev => ({ ...prev, cropName: crop }))}
+                placeholder="Type to search crops..."
+              />
             </div>
 
             <div>
@@ -147,20 +135,15 @@ const SellForm = ({ onSubmit }: SellFormProps) => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Location & Media</h3>
             
-            <div>
-              <label className="block text-sm font-medium mb-2">Location</label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Enter your location"
-                  value={formData.location}
-                  onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                  className="flex-1"
-                />
-                <Button variant="outline" size="icon">
-                  <MapPin className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+            <LocationSelector
+              selectedState={formData.state}
+              selectedDistrict={formData.district}
+              selectedMarket={formData.market}
+              onStateChange={(state) => setFormData(prev => ({ ...prev, state }))}
+              onDistrictChange={(district) => setFormData(prev => ({ ...prev, district }))}
+              onMarketChange={(market) => setFormData(prev => ({ ...prev, market }))}
+              showMarket={true}
+            />
 
             <div>
               <label className="block text-sm font-medium mb-2">Upload Photos (up to 5)</label>

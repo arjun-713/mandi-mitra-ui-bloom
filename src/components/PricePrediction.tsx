@@ -2,18 +2,16 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TrendingUp, TrendingDown, AlertTriangle, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import LocationSelector from '@/components/LocationSelector';
+import CropSelector from '@/components/CropSelector';
 
-interface PricePredictionProps {
-  availableCrops: string[];
-  availableMarkets: string[];
-}
-
-const PricePrediction = ({ availableCrops, availableMarkets }: PricePredictionProps) => {
-  const [selectedCrop, setSelectedCrop] = useState('');
+const PricePrediction = () => {
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedMarket, setSelectedMarket] = useState('');
+  const [selectedCrop, setSelectedCrop] = useState('');
   const [prediction, setPrediction] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +50,8 @@ const PricePrediction = ({ availableCrops, availableMarkets }: PricePredictionPr
     setPrediction({
       crop: selectedCrop,
       market: selectedMarket,
+      state: selectedState,
+      district: selectedDistrict,
       currentPrice,
       weeklyPrices,
       avgPredictedPrice: Math.round(avgPredictedPrice),
@@ -75,34 +75,25 @@ const PricePrediction = ({ availableCrops, availableMarkets }: PricePredictionPr
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">Select Crop</label>
-              <Select value={selectedCrop} onValueChange={setSelectedCrop}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableCrops.map(crop => (
-                    <SelectItem key={crop} value={crop}>{crop}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CropSelector
+                selectedCrop={selectedCrop}
+                onCropChange={setSelectedCrop}
+                placeholder="Type to search crops..."
+              />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium mb-2">Select Market</label>
-              <Select value={selectedMarket} onValueChange={setSelectedMarket}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a market" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableMarkets.map(market => (
-                    <SelectItem key={market} value={market}>{market}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <LocationSelector
+              selectedState={selectedState}
+              selectedDistrict={selectedDistrict}
+              selectedMarket={selectedMarket}
+              onStateChange={setSelectedState}
+              onDistrictChange={setSelectedDistrict}
+              onMarketChange={setSelectedMarket}
+              showMarket={true}
+            />
           </div>
           
           <Button 
@@ -127,6 +118,15 @@ const PricePrediction = ({ availableCrops, availableMarkets }: PricePredictionPr
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="text-sm text-gray-600 mb-1">
+                {prediction.crop} • {prediction.market}
+              </div>
+              <div className="text-xs text-gray-500">
+                {prediction.district}, {prediction.state}
+              </div>
+            </div>
+            
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <p className="text-sm text-gray-600">Current Price</p>
