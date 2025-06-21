@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -78,7 +79,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Full Name</Label>
                 <Input
                   id="name"
                   type="text"
@@ -86,24 +87,26 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  className="mt-1"
                 />
               </div>
             )}
             
             <div>
-              <Label htmlFor="phone">{t('phone_number')}</Label>
+              <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">{t('phone_number')}</Label>
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+91 98765 43210"
+                placeholder="Enter your phone number"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
+                className="mt-1"
               />
             </div>
             
             <div>
-              <Label htmlFor="password">{t('password')}</Label>
+              <Label htmlFor="password" className="text-sm font-semibold text-gray-700">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -111,20 +114,24 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="mt-1"
               />
             </div>
             
             {!isLogin && (
-              <LocationSelector
-                selectedState={state}
-                selectedDistrict={district}
-                onStateChange={setState}
-                onDistrictChange={setDistrict}
-                showMarket={false}
-              />
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-gray-700">Location</Label>
+                <LocationSelector
+                  selectedState={state}
+                  selectedDistrict={district}
+                  onStateChange={setState}
+                  onDistrictChange={setDistrict}
+                  showMarket={false}
+                />
+              </div>
             )}
             
-            <Button type="submit" className="w-full bg-primary hover:bg-green-700">
+            <Button type="submit" className="w-full bg-primary hover:bg-green-700 font-semibold">
               {isLogin ? t('login') : t('create_account')}
             </Button>
             
@@ -132,7 +139,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:underline text-sm"
+                className="text-primary hover:underline text-sm font-medium"
               >
                 {isLogin ? t('no_account_signup') : t('have_account_login')}
               </button>
@@ -140,7 +147,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
           </form>
           
           <div className="pt-4 border-t border-gray-200">
-            <Label className="text-sm font-medium text-gray-700 mb-2 block">
+            <Label className="text-sm font-semibold text-gray-700 mb-2 block">
               {t('change_language')}
             </Label>
             <LanguageSelector />

@@ -8,9 +8,10 @@ interface CropWatchlistProps {
   userCrops?: string[];
   userMarket?: string;
   onViewAll?: () => void;
+  onCropClick?: (cropName: string) => void;
 }
 
-const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistProps) => {
+const CropWatchlist = ({ userCrops = [], userMarket, onViewAll, onCropClick }: CropWatchlistProps) => {
   const { t } = useLanguage();
 
   // Generate mock price data for user's crops
@@ -31,7 +32,6 @@ const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistP
     };
   };
 
-  // Use user's crops or fallback to default crops
   const cropsToShow = userCrops.length > 0 
     ? userCrops.slice(0, 3).map(generateMockPrice)
     : [
@@ -79,7 +79,11 @@ const CropWatchlist = ({ userCrops = [], userMarket, onViewAll }: CropWatchlistP
       
       <div className="space-y-3">
         {cropsToShow.map((crop, index) => (
-          <Card key={index} className="bg-white shadow-sm border border-gray-200">
+          <Card 
+            key={index} 
+            className="bg-white shadow-sm border border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => onCropClick?.(crop.name)}
+          >
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">

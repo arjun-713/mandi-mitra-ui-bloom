@@ -33,7 +33,10 @@ const QuickActions = ({ onAddCrop, onPredictPrice, onAddExpense, onSellCrop }: Q
       label: t('add_expense'),
       color: 'bg-orange-500 hover:bg-orange-600',
       textColor: 'text-white',
-      onClick: onAddExpense
+      onClick: () => {
+        // Navigate to active crops page instead of history
+        onAddCrop();
+      }
     },
     {
       icon: ShoppingCart,

@@ -1,38 +1,45 @@
 
 import { Card, CardContent } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
-const PriceAlerts = () => {
+interface PriceAlertsProps {
+  userLocation?: string;
+}
+
+const PriceAlerts = ({ userLocation = 'Davangere Market' }: PriceAlertsProps) => {
   const alerts = [
     {
-      type: 'jump',
+      type: 'increase',
       crop: 'Onion',
       change: '+₹400',
-      period: '24hrs',
+      period: 'Increasing',
       icon: TrendingUp,
-      color: 'text-red-600'
+      color: 'text-green-600',
+      status: 'Good to Sell'
     },
     {
-      type: 'trending',
+      type: 'increase',
       crop: 'Cotton',
-      change: '+15%',
-      period: 'this week',
+      change: '+₹250',
+      period: 'Increasing',
       icon: TrendingUp,
-      color: 'text-green-600'
+      color: 'text-green-600',
+      status: 'Good to Sell'
     },
     {
-      type: 'drop',
+      type: 'decrease',
       crop: 'Tomato',
       change: '-₹200',
-      period: 'Good to buy',
+      period: 'Decreasing',
       icon: TrendingDown,
-      color: 'text-orange-600'
+      color: 'text-red-600',
+      status: 'Hold Stock'
     }
   ];
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold text-gray-700 mb-2">Price Alerts</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mb-2">Price Alerts at {userLocation}</h3>
       {alerts.map((alert, index) => {
         const IconComponent = alert.icon;
         return (
@@ -43,7 +50,8 @@ const PriceAlerts = () => {
                 <div className="flex-1">
                   <span className="font-medium">{alert.crop}</span>
                   <span className={`ml-2 font-bold ${alert.color}`}>{alert.change}</span>
-                  <span className="text-sm text-gray-600 ml-2">({alert.period})</span>
+                  <span className={`text-sm ml-2 ${alert.color}`}>({alert.period})</span>
+                  <div className="text-xs text-gray-600 mt-1">{alert.status}</div>
                 </div>
               </div>
             </CardContent>

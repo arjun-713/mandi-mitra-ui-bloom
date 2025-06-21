@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MapPin, Navigation, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/Language Context'
 
 interface MandiPageProps {
   onBack: () => void;
@@ -21,6 +21,7 @@ const MandiPage = ({ onBack }: MandiPageProps) => {
       distance: 5,
       activeBuyerCount: 45,
       buyerDemand: 'high' as const,
+      coordinates: '14.4644,75.9216', // Davangere coordinates
       topCrops: [
         { cropName: 'Cotton', currentPrice: 5600, priceChange: 150 },
         { cropName: 'Maize', currentPrice: 1850, priceChange: -50 },
@@ -34,6 +35,7 @@ const MandiPage = ({ onBack }: MandiPageProps) => {
       distance: 15,
       activeBuyerCount: 32,
       buyerDemand: 'medium' as const,
+      coordinates: '14.5158,75.8047', // Harihar coordinates
       topCrops: [
         { cropName: 'Rice', currentPrice: 1900, priceChange: 75 },
         { cropName: 'Wheat', currentPrice: 2100, priceChange: -25 },
@@ -47,6 +49,7 @@ const MandiPage = ({ onBack }: MandiPageProps) => {
       distance: 35,
       activeBuyerCount: 28,
       buyerDemand: 'medium' as const,
+      coordinates: '14.2251,76.3958', // Chitradurga coordinates
       topCrops: [
         { cropName: 'Onion', currentPrice: 2800, priceChange: -200 },
         { cropName: 'Tomato', currentPrice: 3200, priceChange: 150 },
@@ -74,6 +77,11 @@ const MandiPage = ({ onBack }: MandiPageProps) => {
       case 'low': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const openGoogleMaps = (coordinates: string, mandiName: string) => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${coordinates}&travelmode=driving`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -156,7 +164,15 @@ const MandiPage = ({ onBack }: MandiPageProps) => {
                 </div>
               </div>
               
-              <Button variant="outline" size="sm" className="w-full">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openGoogleMaps(mandi.coordinates, mandi.mandiName);
+                }}
+              >
                 <Navigation className="w-4 h-4 mr-2" />
                 Get Directions
               </Button>
