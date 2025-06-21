@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Camera, Plus, MapPin } from 'lucide-react';
-import { CropSelector, LocationSelector } from '@/components';
+import CropSelector from '@/components/CropSelector';
+import LocationSelector from '@/components/LocationSelector';
 
 interface SellFormProps {
   onSubmit: (formData: any) => void;
