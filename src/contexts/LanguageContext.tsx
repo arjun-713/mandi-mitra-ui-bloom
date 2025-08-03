@@ -207,14 +207,21 @@ const translations = {
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem('selectedLanguage') || 'en';
+  });
+
+  const handleSetLanguage = (lang: string) => {
+    setLanguage(lang);
+    localStorage.setItem('selectedLanguage', lang);
+  };
 
   const t = (key: string): string => {
     return translations[language as keyof typeof translations]?.[key as keyof typeof translations.en] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -98,51 +98,34 @@ const App = () => {
     setShowSettings(false);
   };
 
-  if (!user) {
-    return (
-      <LanguageProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <LoginPage onLogin={handleLogin} onSignup={handleSignup} />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </LanguageProvider>
-    );
-  }
+  const renderContent = () => {
+    if (!user) {
+      return <LoginPage onLogin={handleLogin} onSignup={handleSignup} />;
+    }
 
-  if (showSurvey) {
-    return (
-      <LanguageProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <SurveyPage onComplete={handleSurveyComplete} onBack={handleBackToLogin} />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </LanguageProvider>
-    );
-  }
+    if (showSurvey) {
+      return <SurveyPage onComplete={handleSurveyComplete} onBack={handleBackToLogin} />;
+    }
 
-  if (showSettings) {
+    if (showSettings) {
+      return (
+        <SettingsPage 
+          user={user} 
+          onBack={() => setShowSettings(false)} 
+          onSave={handleSettingsSave} 
+        />
+      );
+    }
+
     return (
-      <LanguageProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <SettingsPage 
-              user={user} 
-              onBack={() => setShowSettings(false)} 
-              onSave={handleSettingsSave} 
-            />
-          </TooltipProvider>
-        </QueryClientProvider>
-      </LanguageProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index user={user} onShowSettings={() => setShowSettings(true)} />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     );
-  }
+  };
 
   return (
     <LanguageProvider>
@@ -150,12 +133,7 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index user={user} onShowSettings={() => setShowSettings(true)} />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          {renderContent()}
         </TooltipProvider>
       </QueryClientProvider>
     </LanguageProvider>
