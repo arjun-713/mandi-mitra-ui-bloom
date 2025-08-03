@@ -8,18 +8,18 @@ const MarketNews = () => {
   
   const news = [
     {
-      title: 'Wheat prices surge 5% amid supply concerns',
-      time: '2 hours ago',
+      title: t('wheat_price_surge'),
+      time: t('two_hours_ago'),
       category: t('market_alert')
     },
     {
-      title: 'New government subsidy for organic farming announced',
-      time: '4 hours ago',
+      title: t('govt_subsidy_news'),
+      time: t('four_hours_ago'),
       category: t('policy_update')
     },
     {
-      title: 'Monsoon forecast: Normal rainfall expected this season',
-      time: '6 hours ago',
+      title: t('monsoon_forecast'),
+      time: t('six_hours_ago'),
       category: t('weather_update')
     }
   ];

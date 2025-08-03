@@ -84,6 +84,35 @@ const translations = {
     update: 'Update',
     delete: 'Delete',
     
+    // News categories
+    market_alert: 'Market Alert',
+    policy_update: 'Policy Update',
+    weather_update: 'Weather Update',
+    
+    // Crop management additional
+    active_crops_title: 'Active Crops',
+    add_crop_button: 'Add Crop',
+    add_new_crop: 'Add New Crop',
+    search_crop_placeholder: 'Search or type crop name',
+    start_date_label: 'Start Date',
+    acres_label: 'Acres',
+    acres_placeholder: 'Enter acres (e.g., 2.5)',
+    no_crops_added: 'No crops added yet',
+    add_now: 'Add Now',
+    started: 'Started',
+    total_expenses_label: 'Total Expenses',
+    
+    // Time
+    hours_ago: 'hours ago',
+    two_hours_ago: '2 hours ago',
+    four_hours_ago: '4 hours ago',
+    six_hours_ago: '6 hours ago',
+    
+    // News titles
+    wheat_price_surge: 'Wheat prices surge 5% amid supply concerns',
+    govt_subsidy_news: 'New government subsidy for organic farming announced',
+    monsoon_forecast: 'Monsoon forecast: Normal rainfall expected this season',
+    
     // Survey
     survey_title: 'Tell us about yourself',
     survey_subtitle: 'Help us personalize your experience',
@@ -179,6 +208,35 @@ const translations = {
     add: 'जोड़ें',
     update: 'अपडेट करें',
     delete: 'हटाएं',
+    
+    // News categories
+    market_alert: 'बाज़ार अलर्ट',
+    policy_update: 'नीति अपडेट',
+    weather_update: 'मौसम अपडेट',
+    
+    // Crop management additional
+    active_crops_title: 'सक्रिय फसलें',
+    add_crop_button: 'फसल जोड़ें',
+    add_new_crop: 'नई फसल जोड़ें',
+    search_crop_placeholder: 'फसल का नाम खोजें या टाइप करें',
+    start_date_label: 'शुरुआत की तारीख',
+    acres_label: 'एकड़',
+    acres_placeholder: 'एकड़ दर्ज करें (जैसे 2.5)',
+    no_crops_added: 'अभी तक कोई फसल नहीं जोड़ी गई',
+    add_now: 'अभी जोड़ें',
+    started: 'शुरू किया गया',
+    total_expenses_label: 'कुल खर्च',
+    
+    // Time
+    hours_ago: 'घंटे पहले',
+    two_hours_ago: '2 घंटे पहले',
+    four_hours_ago: '4 घंटे पहले',
+    six_hours_ago: '6 घंटे पहले',
+    
+    // News titles
+    wheat_price_surge: 'आपूर्ति की चिंताओं के बीच गेहूं की कीमतों में 5% की तेजी',
+    govt_subsidy_news: 'जैविक खेती के लिए नई सरकारी सब्सिडी की घोषणा',
+    monsoon_forecast: 'मानसून पूर्वानुमान: इस सीजन सामान्य बारिश की उम्मीद',
     
     // Survey
     survey_title: 'अपने बारे में बताएं',

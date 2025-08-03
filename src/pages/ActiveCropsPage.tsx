@@ -118,22 +118,22 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
               >
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="text-xl font-bold text-primary">Active Crops</h1>
+              <h1 className="text-xl font-bold text-primary">{t('active_crops_title')}</h1>
             </div>
             <Dialog open={showAddCrop} onOpenChange={setShowAddCrop}>
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-green-700">
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Crop
+                  {t('add_crop_button')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add New Crop</DialogTitle>
+                  <DialogTitle>{t('add_new_crop')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label>Crop Name</Label>
+                    <Label>{t('crop_name')}</Label>
                     <div className="relative">
                       <Input
                         value={cropSearchTerm || newCrop.name}
@@ -141,7 +141,7 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
                           setCropSearchTerm(e.target.value);
                           setNewCrop({...newCrop, name: e.target.value});
                         }}
-                        placeholder="Search or type crop name"
+                        placeholder={t('search_crop_placeholder')}
                       />
                       {cropSearchTerm && filteredCrops.length > 0 && (
                         <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto">
@@ -162,7 +162,7 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
                     </div>
                   </div>
                   <div>
-                    <Label>Start Date</Label>
+                    <Label>{t('start_date_label')}</Label>
                     <Input
                       type="date"
                       value={newCrop.startDate}
@@ -170,18 +170,18 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
                     />
                   </div>
                   <div>
-                    <Label>Acres</Label>
+                    <Label>{t('acres_label')}</Label>
                     <Input
                       type="number"
                       step="0.5"
                       value={newCrop.acres}
                       onChange={(e) => setNewCrop({...newCrop, acres: e.target.value})}
-                      placeholder="Enter acres (e.g., 2.5)"
+                      placeholder={t('acres_placeholder')}
                       className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
                   <Button onClick={handleAddCrop} className="w-full bg-primary hover:bg-green-700">
-                    Add Crop
+                    {t('add_crop_button')}
                   </Button>
                 </div>
               </DialogContent>
@@ -194,13 +194,13 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
         {crops.length === 0 ? (
           <Card className="bg-white shadow-sm border border-gray-200">
             <CardContent className="p-8 text-center">
-              <p className="text-gray-600 mb-4">No crops added yet</p>
+              <p className="text-gray-600 mb-4">{t('no_crops_added')}</p>
               <Button 
                 onClick={() => setShowAddCrop(true)}
                 className="bg-primary hover:bg-green-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Now
+                {t('add_now')}
               </Button>
             </CardContent>
           </Card>
@@ -227,11 +227,11 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Land Preparation">Land Preparation</SelectItem>
-                          <SelectItem value="Sowing">Sowing</SelectItem>
-                          <SelectItem value="Growing">Growing</SelectItem>
-                          <SelectItem value="Ready to Harvest">Ready to Harvest</SelectItem>
-                          <SelectItem value="Harvested">Harvested</SelectItem>
+                          <SelectItem value="Land Preparation">{t('land_preparation')}</SelectItem>
+                          <SelectItem value="Sowing">{t('sowing')}</SelectItem>
+                          <SelectItem value="Growing">{t('growing')}</SelectItem>
+                          <SelectItem value="Ready to Harvest">{t('ready_to_harvest')}</SelectItem>
+                          <SelectItem value="Harvested">{t('harvested')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -239,15 +239,15 @@ const ActiveCropsPage = ({ user, onBack, onUpdateUserCrops }: ActiveCropsPagePro
                   
                   <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
                     <div>
-                      <span className="block">Started:</span>
+                      <span className="block">{t('started')}:</span>
                       <span className="font-medium text-gray-900">{crop.startDate}</span>
                     </div>
                     <div>
-                      <span className="block">Acres:</span>
+                      <span className="block">{t('acres_label')}:</span>
                       <span className="font-medium text-gray-900">{crop.acres}</span>
                     </div>
                     <div>
-                      <span className="block">Total Expenses:</span>
+                      <span className="block">{t('total_expenses_label')}:</span>
                       <div className="flex items-center gap-1 font-medium text-gray-900">
                         <IndianRupee className="w-3 h-3" />
                         <span>₹{(crop.totalExpenses || 0).toLocaleString()}</span>

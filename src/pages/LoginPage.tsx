@@ -79,7 +79,7 @@ const LoginPage = ({ onLogin, onSignup }: LoginPageProps) => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <Label htmlFor="name" className="text-sm font-semibold text-gray-700">Full Name</Label>
+                <Label htmlFor="name" className="text-sm font-semibold text-gray-700">{t('name')}</Label>
                 <Input
                   id="name"
                   type="text"
